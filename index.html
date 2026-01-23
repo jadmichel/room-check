@@ -3,106 +3,109 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Room Checklist</title>
+    <title>Room Check</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f0f2f5; color: #1c1e21; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h2 { margin-top: 0; color: #1a73e8; border-bottom: 2px solid #e8eaed; padding-bottom: 10px; }
-        .item { display: flex; align-items: flex-start; margin-bottom: 15px; }
-        input[type="checkbox"] { width: 28px; height: 28px; margin-right: 12px; flex-shrink: 0; cursor: pointer; }
-        label { font-size: 16px; cursor: pointer; line-height: 1.4; }
-        textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; }
-        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .info { font-size: 14px; color: #606770; margin-bottom: 20px; font-style: italic; }
-        .warning { color: #d93025; font-weight: bold; display: none; margin-bottom: 10px; text-align: center; }
+        body { font-family: sans-serif; padding: 20px; background-color: #f0f2f5; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        h2 { margin-top: 0; color: #1a73e8; }
+        .item { display: flex; align-items: center; margin-bottom: 15px; font-size: 17px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        input[type="checkbox"] { width: 28px; height: 28px; margin-right: 15px; cursor: pointer; }
+        textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .hidden { display: none; }
+        .success { text-align: center; color: #25D366; }
     </style>
 </head>
 <body>
-    <div class="card" id="mainCard">
-        <h2 id="roomTitle">Room ...</h2>
-        <div id="statusMsg" class="info">Loading staff...</div>
-        <div id="checklist"></div>
-        <textarea id="notes" placeholder="Comments (optional)..."></textarea>
-        <div id="errorMsg" class="warning">PLEASE CHECK ALL ITEMS!</div>
-        <button id="sendBtn" onclick="sendWhatsApp()">SEND TO GROUP</button>
+    <div class="card" id="app">
+        <h2 id="roomTitle">Loading...</h2>
+        <div id="checklistArea" class="hidden">
+            <div id="list"></div>
+            <textarea id="notes" placeholder="Notes / Issues (Optional)"></textarea>
+            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ CHECK ALL BOXES!</p>
+            <button onclick="send()">SEND TO GROUP</button>
+        </div>
     </div>
 
     <script>
         const CHECKS = [
-            "AC operates correctly; remote & batteries OK",
-            "TV operates correctly; remote & batteries OK",
-            "AC switch ON & taped",
-            "Mini-fridge switch ON & taped",
-            "Windows & balcony door close & lock",
-            "Safe empty & left open",
-            "All lighting & toilet fan operational",
-            "Bathroom equipment OK",
-            "Towels correct; hair dryer OK",
-            "Room fully clean"
+            "AC Checked", "TV Checked", "AC Switch ON", "Fridge ON", 
+            "Windows Locked", "Safe Empty", "Lights OK", 
+            "Bathroom OK", "Towels OK", "Room Clean"
         ];
 
         const params = new URLSearchParams(window.location.search);
         const room = params.get('r') || "Unknown";
         document.getElementById('roomTitle').innerText = "Room " + room;
 
-        let activeCleaner = null;
+        let staffName = sessionStorage.getItem('staffName');
 
+        // Fetch staff list silently in the background
         fetch('cleaners.json?v=' + Date.now())
-            .then(response => response.json())
-            .then(cleaners => {
-                document.getElementById('statusMsg').innerText = "Staff list ready.";
-                let p = prompt("Enter Password:");
-                activeCleaner = cleaners.find(c => c.password === p);
-
-                if (!activeCleaner) {
-                    alert("Wrong password!");
-                    document.body.innerHTML = "<h2>Access Denied</h2>";
+            .then(r => r.json())
+            .then(data => {
+                if (!staffName) {
+                    let p = prompt("Enter Password:");
+                    let user = data.find(u => u.password === p);
+                    if (user) {
+                        staffName = user.name;
+                        sessionStorage.setItem('staffName', staffName);
+                        showList();
+                    } else {
+                        alert("Wrong Password!");
+                        location.reload(); // Restart if wrong
+                    }
                 } else {
-                    document.getElementById('statusMsg').innerText = "Staff: " + activeCleaner.name;
-                    const listDiv = document.getElementById('checklist');
-                    CHECKS.forEach((text, i) => {
-                        listDiv.innerHTML += `
-                            <div class="item">
-                                <input type="checkbox" id="c${i}">
-                                <label for="c${i}">${text}</label>
-                            </div>`;
-                    });
+                    showList();
                 }
             })
-            .catch(err => { document.getElementById('statusMsg').innerText = "Error loading staff."; });
+            .catch(err => alert("Connection error. Try again."));
 
-        function sendWhatsApp() {
-            let incomplete = false;
-            CHECKS.forEach((_, i) => { if(!document.getElementById('c'+i).checked) incomplete = true; });
+        function showList() {
+            const checklistArea = document.getElementById('checklistArea');
+            const listDiv = document.getElementById('list');
+            checklistArea.classList.remove('hidden');
+            
+            listDiv.innerHTML = ""; // Clear loader
+            CHECKS.forEach((text, i) => {
+                listDiv.innerHTML += `
+                    <div class="item">
+                        <input type="checkbox" class="chk" id="i${i}">
+                        <label for="i${i}">${text}</label>
+                    </div>`;
+            });
+        }
 
-            if(incomplete) {
-                document.getElementById('errorMsg').style.display = 'block';
+        function send() {
+            const boxes = document.querySelectorAll('.chk');
+            const allChecked = Array.from(boxes).every(b => b.checked);
+            
+            if (!allChecked) {
+                document.getElementById('warn').style.display = 'block';
                 return;
             }
 
-            let notes = document.getElementById('notes').value.trim();
+            let noteText = document.getElementById('notes').value.trim();
             
-            // Build message using strictly URL-safe plain text
-            let messageBody = "ROOM " + room + " READY\n";
-            messageBody += "Staff: " + activeCleaner.name + "\n";
-            messageBody += "Time: " + new Date().toLocaleString() + "\n";
-            if(notes) messageBody += "Notes: " + notes + "\n";
-            messageBody += "Status: All checked OK";
+            // Build the message - No special characters or stars to prevent [?]
+            let msg = "ROOM " + room + " READY\n";
+            msg += "By: " + staffName + "\n";
+            msg += "Time: " + new Date().toLocaleTimeString() + "\n";
+            msg += "Notes: " + (noteText || "None");
 
-            const whatsappUrl = "https://wa.me/?text=" + encodeURIComponent(messageBody);
+            // Encode for WhatsApp
+            const finalUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
+            
+            // UI Update: Change screen immediately so back button doesn't trigger password
+            document.getElementById('app').innerHTML = `
+                <div class="success">
+                    <h2>✅ SENT</h2>
+                    <p>Report sent to WhatsApp Group.</p>
+                    <button onclick="location.reload()" style="background:#1a73e8;">New Check</button>
+                </div>`;
 
-            // 1. Open WhatsApp
-            window.open(whatsappUrl, '_blank');
-
-            // 2. Change the screen so it doesn't ask for password again
-            document.getElementById('mainCard').innerHTML = `
-                <div style="text-align:center; padding:40px 0;">
-                    <h2 style="color:#25D366;">SUCCESS!</h2>
-                    <p>Report has been sent to WhatsApp.</p>
-                    <p>You can close this window now.</p>
-                    <button onclick="location.reload()" style="background:#1a73e8;">Start New Room</button>
-                </div>
-            `;
+            // Open WhatsApp in the same window to prevent background loops
+            window.location.href = finalUrl;
         }
     </script>
 </body>
