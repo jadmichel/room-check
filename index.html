@@ -5,51 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Room Checklist</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-        input[type="checkbox"] { transform: scale(1.5); margin-right: 10px; }
-        button { padding: 15px; background: #25D366; color: white; border: none; border-radius: 5px; width: 100%; font-size: 16px; }
+        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f0f2f5; color: #1c1e21; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        h2 { margin-top: 0; color: #1a73e8; border-bottom: 2px solid #e8eaed; padding-bottom: 10px; }
+        .item { display: flex; align-items: flex-start; margin-bottom: 15px; cursor: pointer; }
+        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; flex-shrink: 0; }
+        label { font-size: 16px; cursor: pointer; line-height: 1.4; }
+        button { background-color: #25D366; color: white; border: none; padding: 16px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:active { background-color: #128C7E; }
+        .info { font-size: 14px; color: #606770; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <div id="app">
-        <h2 id="roomTitle">Loading...</h2>
+    <div class="card">
+        <h2 id="roomTitle">Room ...</h2>
+        <div id="cleanerDisplay" class="info"></div>
         <div id="checklist"></div>
-        <br>
-        <button onclick="sendWhatsApp()">Send to WhatsApp</button>
+        <button onclick="sendWhatsApp()">SEND TO WHATSAPP</button>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
+        // Data from your original script
+        const MANAGER_PHONE = "33752025199"; 
         const CLEANERS = [
-            { n: "tiron", p: "t123" },
-            { n: "gayash", p: "g456" }
+            { name: "tiron", password: "t123" },
+            { name: "gayash", password: "g456" }
         ];
-        const CHECKS = ["AC OK", "TV OK", "Safe Open", "Towels Ready", "Fully Clean"];
-        const MANAGER_PHONE = "33752025199"; // Your phone without '+'
+        const CHECKS = [
+            "AC operates correctly; remote & batteries OK",
+            "TV operates correctly; remote & batteries OK",
+            "AC switch ON & taped",
+            "Mini-fridge switch ON & taped",
+            "Windows & balcony door close & lock",
+            "Safe empty & left open",
+            "All lighting & toilet fan operational",
+            "Bathroom equipment OK",
+            "Towels correct; hair dryer OK",
+            "Room fully clean"
+        ];
 
-        // --- LOGIC ---
+        // 1. Get room from URL (?r=110)
         const params = new URLSearchParams(window.location.search);
         const room = params.get('r') || "Unknown";
         document.getElementById('roomTitle').innerText = "Room " + room;
 
-        let pass = prompt("Enter Password:");
-        let user = CLEANERS.find(u => u.p === pass);
+        // 2. Security Login
+        let p = prompt("Enter Password:");
+        let cleaner = CLEANERS.find(c => c.password === p);
 
-        if (!user) {
+        if (!cleaner) {
             alert("Wrong password!");
-            document.body.innerHTML = "<h1>Access Denied</h1>";
+            document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px;'>Access Denied</h2>";
         } else {
+            document.getElementById('cleanerDisplay').innerText = "Cleaner: " + cleaner.name;
             const listDiv = document.getElementById('checklist');
             CHECKS.forEach((text, i) => {
-                listDiv.innerHTML += `<label><input type="checkbox" id="c${i}"> ${text}</label><br>`;
+                listDiv.innerHTML += `
+                    <div class="item">
+                        <input type="checkbox" id="c${i}">
+                        <label for="c${i}">${text}</label>
+                    </div>`;
             });
         }
 
+        // 3. Send Formatted Message
         function sendWhatsApp() {
             let ok = true;
             CHECKS.forEach((_, i) => { if(!document.getElementById('c'+i).checked) ok = false; });
-            let msg = `${ok ? "✅" : "❌"} Room ${room} - ${ok ? "READY" : "ISSUE"}\nBy: ${user.n}\nTime: ${new Date().toLocaleString()}`;
-            window.location.href = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent(msg)}`;
+            
+            let status = ok ? "READY" : "NOT READY";
+            let emoji = ok ? "✅" : "❌";
+            
+            // Matches your original message format
+            let msg = `${emoji} Room ${room} - ${status}\nCleaner: ${cleaner.name}\nTime: ${new Date().toLocaleString()}\nChecklist:`;
+            
+            CHECKS.forEach((text, i) => {
+                let isChecked = document.getElementById('c'+i).checked;
+                msg += `\n${i+1}. [${isChecked ? "✅" : "❌"}] ${text}`;
+            });
+
+            const waUrl = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent(msg)}`;
+            window.location.href = waUrl;
         }
     </script>
 </body>
