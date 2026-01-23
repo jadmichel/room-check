@@ -37,7 +37,7 @@
             <div id="list"></div>
             <textarea id="notes" placeholder="Notes / Issues (Optional)"></textarea>
             <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">CHECK ALL BOXES!</p>
-            <button onclick="send()">SEND TO GROUP</button>
+            <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
 
@@ -53,17 +53,14 @@
         document.getElementById('roomDisplay').innerText = "Room " + room;
 
         let staffData = [];
-        let staffName = sessionStorage.getItem('staffName');
+        let staffName = null;
 
+        // Fetch staff list
         fetch('cleaners.json?v=' + Date.now())
             .then(r => r.json())
             .then(data => {
                 staffData = data;
-                if (!staffName) {
-                    document.getElementById('loginArea').classList.remove('hidden');
-                } else {
-                    showList();
-                }
+                document.getElementById('loginArea').classList.remove('hidden');
             });
 
         function checkLogin() {
@@ -71,7 +68,6 @@
             const user = staffData.find(u => u.password === p);
             if (user) {
                 staffName = user.name;
-                sessionStorage.setItem('staffName', staffName);
                 document.getElementById('loginArea').classList.add('hidden');
                 showList();
             } else {
@@ -80,7 +76,6 @@
         }
 
         function showList() {
-            // Update Header with Staff Name
             const staffDiv = document.getElementById('staffDisplay');
             staffDiv.innerText = "Staff: " + staffName;
             staffDiv.classList.remove('hidden');
@@ -116,10 +111,15 @@
 
             const finalUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
             
+            // LOG OUT LOGIC: Clear variables and UI
+            staffName = null;
+            sessionStorage.clear();
+
             document.getElementById('app').innerHTML = `
                 <div class="success">
                     <h2>REPORT SENT</h2>
                     <p>Redirecting to WhatsApp...</p>
+                    <p style="color:#666; font-size:12px;">Staff logged out automatically.</p>
                     <button onclick="location.reload()" style="background:#1a73e8; color:white; border:none; padding:15px; border-radius:8px; width:100%; cursor:pointer;">Start New Room</button>
                 </div>`;
 
