@@ -18,7 +18,7 @@
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card" id="mainCard">
         <h2 id="roomTitle">Room ...</h2>
         <div id="statusMsg" class="info">Loading staff...</div>
         <div id="checklist"></div>
@@ -69,7 +69,7 @@
                     });
                 }
             })
-            .catch(err => { document.getElementById('statusMsg').innerText = "Error loading list."; });
+            .catch(err => { document.getElementById('statusMsg').innerText = "Error loading staff."; });
 
         function sendWhatsApp() {
             let incomplete = false;
@@ -82,21 +82,27 @@
 
             let notes = document.getElementById('notes').value.trim();
             
-            // BUILDING PLAIN TEXT MESSAGE (NO EMOJIS, NO STARS)
-            let msg = "ROOM " + room + " READY\n";
-            msg += "Staff: " + activeCleaner.name + "\n";
-            msg += "Time: " + new Date().toLocaleString() + "\n";
-            
-            if(notes) {
-                msg += "Notes: " + notes + "\n";
-            } else {
-                msg += "Status: All checked OK\n";
-            }
-            
-            msg += "---------------------------";
+            // Build message using strictly URL-safe plain text
+            let messageBody = "ROOM " + room + " READY\n";
+            messageBody += "Staff: " + activeCleaner.name + "\n";
+            messageBody += "Time: " + new Date().toLocaleString() + "\n";
+            if(notes) messageBody += "Notes: " + notes + "\n";
+            messageBody += "Status: All checked OK";
 
-            // Open WhatsApp share (User selects the group)
-            window.location.href = "https://wa.me/?text=" + encodeURIComponent(msg);
+            const whatsappUrl = "https://wa.me/?text=" + encodeURIComponent(messageBody);
+
+            // 1. Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+
+            // 2. Change the screen so it doesn't ask for password again
+            document.getElementById('mainCard').innerHTML = `
+                <div style="text-align:center; padding:40px 0;">
+                    <h2 style="color:#25D366;">SUCCESS!</h2>
+                    <p>Report has been sent to WhatsApp.</p>
+                    <p>You can close this window now.</p>
+                    <button onclick="location.reload()" style="background:#1a73e8;">Start New Room</button>
+                </div>
+            `;
         }
     </script>
 </body>
