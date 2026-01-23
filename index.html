@@ -5,89 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Room Checklist</title>
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f0f2f5; color: #1c1e21; }
+        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f0f2f5; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h2 { margin-top: 0; color: #1a73e8; border-bottom: 2px solid #e8eaed; padding-bottom: 10px; }
+        h2 { margin-top: 0; color: #1a73e8; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .item { display: flex; align-items: flex-start; margin-bottom: 15px; }
-        input[type="checkbox"] { width: 24px; height: 24px; margin-right: 12px; flex-shrink: 0; cursor: pointer; }
-        label { font-size: 16px; cursor: pointer; line-height: 1.4; }
-        textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; }
+        input[type="checkbox"] { width: 24px; height: 24px; margin-right: 12px; flex-shrink: 0; }
+        textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; padding: 10px; box-sizing: border-box; }
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .info { font-size: 14px; color: #606770; margin-bottom: 20px; }
-        .warning { color: #d93025; font-weight: bold; display: none; margin-bottom: 10px; text-align: center; }
+        .warning { color: #d93025; font-weight: bold; display: none; text-align: center; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2 id="roomTitle">Room ...</h2>
-        <div id="cleanerDisplay" class="info"></div>
-        
+        <div id="cleanerDisplay" style="color:#666; margin-bottom:15px;">Loading cleaners...</div>
         <div id="checklist"></div>
-        
-        <textarea id="notes" placeholder="Add comments or report issues here (optional)..."></textarea>
-        
+        <textarea id="notes" placeholder="Comments (Optional)..."></textarea>
         <div id="errorMsg" class="warning">⚠️ PLEASE CHECK ALL ITEMS!</div>
         <button onclick="sendWhatsApp()">SEND TO WHATSAPP</button>
     </div>
 
     <script>
-        // --- 1. DATA SECTION (Modify rooms, cleaners, and passwords here) ---
         const MANAGER_PHONE = "33752025199"; 
-        const CLEANERS = [
-    {
-        "name": "akhil",
-        "password": "123a"
-    },
-    {
-        "name": "tiron",
-        "password": "456b"
-    },
-    {
-        "name": "maria",
-        "password": "111"
-    }
-];
         const CHECKS = [
-            "AC operates correctly; remote & batteries OK",
-            "TV operates correctly; remote & batteries OK",
-            "AC switch ON & taped",
-            "Mini-fridge switch ON & taped",
-            "Windows & balcony door close & lock",
-            "Safe empty & left open",
-            "All lighting & toilet fan operational",
-            "Bathroom equipment OK",
-            "Towels correct; hair dryer OK",
-            "Room fully clean"
+            "AC operates correctly; remote & batteries OK", "TV operates correctly; remote & batteries OK",
+            "AC switch ON & taped", "Mini-fridge switch ON & taped",
+            "Windows & balcony door close & lock", "Safe empty & left open",
+            "All lighting & toilet fan operational", "Bathroom equipment OK",
+            "Towels correct; hair dryer OK", "Room fully clean"
         ];
 
-        // --- 2. LOGIC SECTION ---
         const params = new URLSearchParams(window.location.search);
         const room = params.get('r') || "Unknown";
         document.getElementById('roomTitle').innerText = "Room " + room;
 
-        let p = prompt("Enter Password:");
-        let cleaner = CLEANERS.find(c => c.password === p);
+        let activeCleaner = null;
 
-        if (!cleaner) {
-            alert("Wrong password!");
-            document.body.innerHTML = "<h2>Access Denied</h2>";
-        } else {
-            document.getElementById('cleanerDisplay').innerText = "Cleaner: " + cleaner.name;
-            const listDiv = document.getElementById('checklist');
-            CHECKS.forEach((text, i) => {
-                listDiv.innerHTML += `
-                    <div class="item">
-                        <input type="checkbox" id="c${i}">
-                        <label for="c${i}">${text}</label>
-                    </div>`;
+        // --- THE EASY PART: This loads the cleaners.json file automatically ---
+        fetch('cleaners.json')
+            .then(response => response.json())
+            .then(cleaners => {
+                let p = prompt("Enter Password:");
+                activeCleaner = cleaners.find(c => c.password === p);
+
+                if (!activeCleaner) {
+                    alert("Wrong password!");
+                    document.body.innerHTML = "<h2>Access Denied</h2>";
+                } else {
+                    document.getElementById('cleanerDisplay').innerText = "Cleaner: " + activeCleaner.name;
+                    const listDiv = document.getElementById('checklist');
+                    CHECKS.forEach((text, i) => {
+                        listDiv.innerHTML += `<div class="item"><input type="checkbox" id="c${i}"><label for="c${i}">${text}</label></div>`;
+                    });
+                }
+            })
+            .catch(err => {
+                document.getElementById('cleanerDisplay').innerText = "Error loading staff list.";
+                console.error(err);
             });
-        }
 
         function sendWhatsApp() {
             let incomplete = false;
-            CHECKS.forEach((_, i) => {
-                if(!document.getElementById('c'+i).checked) incomplete = true;
-            });
+            CHECKS.forEach((_, i) => { if(!document.getElementById('c'+i).checked) incomplete = true; });
 
             if(incomplete) {
                 document.getElementById('errorMsg').style.display = 'block';
@@ -95,24 +74,15 @@
             }
 
             let notes = document.getElementById('notes').value.trim();
-            
-            // Format message - using (V) to avoid the [?] error
-            let msg = "*ROOM " + room + " READY*\n";
-            msg += "By: " + cleaner.name + "\n";
-            msg += "Time: " + new Date().toLocaleString() + "\n";
-            
-            if(notes) {
-                msg += "*Notes:* " + notes + "\n";
-            }
-            
+            let msg = "*ROOM " + room + " READY*\nBy: " + activeCleaner.name + "\nTime: " + new Date().toLocaleString() + "\n";
+            if(notes) msg += "*Notes:* " + notes + "\n";
             msg += "\n*Checklist Results:*\n";
-            CHECKS.forEach((text, i) => {
-                msg += (i+1) + ". (V) " + text + "\n";
-            });
+            CHECKS.forEach((text, i) => { msg += (i+1) + ". (V) " + text + "\n"; });
 
             window.location.href = "https://wa.me/" + MANAGER_PHONE + "?text=" + encodeURIComponent(msg);
         }
     </script>
 </body>
 </html>
+
 
