@@ -20,18 +20,14 @@
 <body>
     <div class="card">
         <h2 id="roomTitle">Room ...</h2>
-        <div id="statusMsg" class="info">Checking staff list...</div>
-        
+        <div id="statusMsg" class="info">Loading staff...</div>
         <div id="checklist"></div>
-        
-        <textarea id="notes" placeholder="Add comments or report issues (optional)..."></textarea>
-        
-        <div id="errorMsg" class="warning">⚠️ PLEASE CHECK ALL ITEMS!</div>
+        <textarea id="notes" placeholder="Comments (optional)..."></textarea>
+        <div id="errorMsg" class="warning">PLEASE CHECK ALL ITEMS!</div>
         <button id="sendBtn" onclick="sendWhatsApp()">SEND TO GROUP</button>
     </div>
 
     <script>
-        // No manager number here - this forces WhatsApp to let you pick a group
         const CHECKS = [
             "AC operates correctly; remote & batteries OK",
             "TV operates correctly; remote & batteries OK",
@@ -51,23 +47,18 @@
 
         let activeCleaner = null;
 
-        // Anti-cache fetch to ensure r10 and other new passwords work
         fetch('cleaners.json?v=' + Date.now())
-            .then(response => {
-                if (!response.ok) throw new Error('File not found');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(cleaners => {
-                document.getElementById('statusMsg').innerText = "Staff list updated.";
-                
+                document.getElementById('statusMsg').innerText = "Staff list ready.";
                 let p = prompt("Enter Password:");
                 activeCleaner = cleaners.find(c => c.password === p);
 
                 if (!activeCleaner) {
                     alert("Wrong password!");
-                    document.body.innerHTML = "<h2 style='text-align:center; padding-top:50px;'>Access Denied</h2>";
+                    document.body.innerHTML = "<h2>Access Denied</h2>";
                 } else {
-                    document.getElementById('statusMsg').innerText = "Cleaner: " + activeCleaner.name;
+                    document.getElementById('statusMsg').innerText = "Staff: " + activeCleaner.name;
                     const listDiv = document.getElementById('checklist');
                     CHECKS.forEach((text, i) => {
                         listDiv.innerHTML += `
@@ -78,16 +69,11 @@
                     });
                 }
             })
-            .catch(err => {
-                document.getElementById('statusMsg').innerText = "Error loading staff list.";
-                console.error(err);
-            });
+            .catch(err => { document.getElementById('statusMsg').innerText = "Error loading list."; });
 
         function sendWhatsApp() {
             let incomplete = false;
-            CHECKS.forEach((_, i) => {
-                if(!document.getElementById('c'+i).checked) incomplete = true;
-            });
+            CHECKS.forEach((_, i) => { if(!document.getElementById('c'+i).checked) incomplete = true; });
 
             if(incomplete) {
                 document.getElementById('errorMsg').style.display = 'block';
@@ -96,22 +82,21 @@
 
             let notes = document.getElementById('notes').value.trim();
             
-            // Building the message with safe formatting to avoid [?] symbols
-            let msg = "✅ ROOM " + room + " READY\n";
+            // BUILDING PLAIN TEXT MESSAGE (NO EMOJIS, NO STARS)
+            let msg = "ROOM " + room + " READY\n";
             msg += "Staff: " + activeCleaner.name + "\n";
             msg += "Time: " + new Date().toLocaleString() + "\n";
             
             if(notes) {
                 msg += "Notes: " + notes + "\n";
             } else {
-                msg += "Status: All items checked OK\n";
+                msg += "Status: All checked OK\n";
             }
             
             msg += "---------------------------";
 
-            // Opening WhatsApp without a number so the user picks the group
-            const url = "https://wa.me/?text=" + encodeURIComponent(msg);
-            window.location.href = url;
+            // Open WhatsApp share (User selects the group)
+            window.location.href = "https://wa.me/?text=" + encodeURIComponent(msg);
         }
     </script>
 </body>
