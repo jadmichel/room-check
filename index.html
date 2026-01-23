@@ -20,12 +20,9 @@
 <body>
     <div class="card">
         <h2 id="roomTitle">Room ...</h2>
-        <div id="statusMsg" class="info">Fetching staff list...</div>
-        
+        <div id="statusMsg" class="info">Updating staff list...</div>
         <div id="checklist"></div>
-        
         <textarea id="notes" placeholder="Add comments or report issues (optional)..."></textarea>
-        
         <div id="errorMsg" class="warning">⚠️ PLEASE CHECK ALL ITEMS!</div>
         <button id="sendBtn" onclick="sendWhatsApp()">SEND TO WHATSAPP</button>
     </div>
@@ -51,14 +48,14 @@
 
         let activeCleaner = null;
 
-        // --- FETCH CLEANERS FROM JSON FILE ---
+        // Force browser to fetch the latest cleaners.json every time
         fetch('cleaners.json?v=' + Date.now())
             .then(response => {
                 if (!response.ok) throw new Error('File not found');
                 return response.json();
             })
             .then(cleaners => {
-                document.getElementById('statusMsg').innerText = "Staff list loaded. Enter password.";
+                document.getElementById('statusMsg').innerText = "Staff list updated. Enter password.";
                 
                 let p = prompt("Enter Password:");
                 activeCleaner = cleaners.find(c => c.password === p);
@@ -79,7 +76,7 @@
                 }
             })
             .catch(err => {
-                document.getElementById('statusMsg').innerText = "Error: cleaners.json file is missing or broken.";
+                document.getElementById('statusMsg').innerText = "Error: cleaners.json missing.";
                 console.error(err);
             });
 
@@ -95,22 +92,20 @@
             }
 
             let notes = document.getElementById('notes').value.trim();
-            let msg = "*ROOM " + room + " READY*\n";
-            msg += "By: " + activeCleaner.name + "\n";
-            msg += "Time: " + new Date().toLocaleString() + "\n";
+            
+            // --- EMOJI VERSION OF COMPACT MESSAGE ---
+            let msg = "✅ *ROOM " + room + " READY*\n";
+            msg += "✨ *By:* " + activeCleaner.name + "\n";
+            msg += "🕒 *Time:* " + new Date().toLocaleString() + "\n";
             
             if(notes) {
-                msg += "*Notes:* " + notes + "\n";
+                msg += "📝 *Notes:* " + notes + "\n";
+            } else {
+                msg += "👍 *Status:* All items checked OK\n";
             }
-            
-            msg += "\n*Checklist Results:*\n";
-            CHECKS.forEach((text, i) => {
-                msg += (i+1) + ". (V) " + text + "\n";
-            });
 
             window.location.href = "https://wa.me/" + MANAGER_PHONE + "?text=" + encodeURIComponent(msg);
         }
     </script>
 </body>
 </html>
-
