@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Room Checklist</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        input[type="checkbox"] { transform: scale(1.5); margin-right: 10px; }
+        button { padding: 15px; background: #25D366; color: white; border: none; border-radius: 5px; width: 100%; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 id="roomTitle">Loading...</h2>
+        <div id="checklist"></div>
+        <br>
+        <button onclick="sendWhatsApp()">Send to WhatsApp</button>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const CLEANERS = [
+            { n: "tiron", p: "t123" },
+            { n: "gayash", p: "g456" }
+        ];
+        const CHECKS = ["AC OK", "TV OK", "Safe Open", "Towels Ready", "Fully Clean"];
+        const MANAGER_PHONE = "33752025199"; // Your phone without '+'
+
+        // --- LOGIC ---
+        const params = new URLSearchParams(window.location.search);
+        const room = params.get('r') || "Unknown";
+        document.getElementById('roomTitle').innerText = "Room " + room;
+
+        let pass = prompt("Enter Password:");
+        let user = CLEANERS.find(u => u.p === pass);
+
+        if (!user) {
+            alert("Wrong password!");
+            document.body.innerHTML = "<h1>Access Denied</h1>";
+        } else {
+            const listDiv = document.getElementById('checklist');
+            CHECKS.forEach((text, i) => {
+                listDiv.innerHTML += `<label><input type="checkbox" id="c${i}"> ${text}</label><br>`;
+            });
+        }
+
+        function sendWhatsApp() {
+            let ok = true;
+            CHECKS.forEach((_, i) => { if(!document.getElementById('c'+i).checked) ok = false; });
+            let msg = `${ok ? "✅" : "❌"} Room ${room} - ${ok ? "READY" : "ISSUE"}\nBy: ${user.n}\nTime: ${new Date().toLocaleString()}`;
+            window.location.href = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent(msg)}`;
+        }
+    </script>
+</body>
+</html>
