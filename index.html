@@ -9,7 +9,7 @@
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
         h2 { margin-top: 0; color: #1a73e8; border-bottom: 2px solid #e8eaed; padding-bottom: 10px; }
         .item { display: flex; align-items: flex-start; margin-bottom: 15px; }
-        input[type="checkbox"] { width: 24px; height: 24px; margin-right: 12px; flex-shrink: 0; cursor: pointer; }
+        input[type="checkbox"] { width: 28px; height: 28px; margin-right: 12px; flex-shrink: 0; cursor: pointer; }
         label { font-size: 16px; cursor: pointer; line-height: 1.4; }
         textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; padding: 10px; font-family: inherit; resize: none; box-sizing: border-box; }
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
@@ -20,15 +20,18 @@
 <body>
     <div class="card">
         <h2 id="roomTitle">Room ...</h2>
-        <div id="statusMsg" class="info">Updating staff list...</div>
+        <div id="statusMsg" class="info">Checking staff list...</div>
+        
         <div id="checklist"></div>
+        
         <textarea id="notes" placeholder="Add comments or report issues (optional)..."></textarea>
+        
         <div id="errorMsg" class="warning">⚠️ PLEASE CHECK ALL ITEMS!</div>
-        <button id="sendBtn" onclick="sendWhatsApp()">SEND TO WHATSAPP</button>
+        <button id="sendBtn" onclick="sendWhatsApp()">SEND TO GROUP</button>
     </div>
 
     <script>
-        const MANAGER_PHONE = "33752025199"; 
+        // No manager number here - this forces WhatsApp to let you pick a group
         const CHECKS = [
             "AC operates correctly; remote & batteries OK",
             "TV operates correctly; remote & batteries OK",
@@ -48,14 +51,14 @@
 
         let activeCleaner = null;
 
-        // Force browser to fetch the latest cleaners.json every time
+        // Anti-cache fetch to ensure r10 and other new passwords work
         fetch('cleaners.json?v=' + Date.now())
             .then(response => {
                 if (!response.ok) throw new Error('File not found');
                 return response.json();
             })
             .then(cleaners => {
-                document.getElementById('statusMsg').innerText = "Staff list updated. Enter password.";
+                document.getElementById('statusMsg').innerText = "Staff list updated.";
                 
                 let p = prompt("Enter Password:");
                 activeCleaner = cleaners.find(c => c.password === p);
@@ -76,7 +79,7 @@
                 }
             })
             .catch(err => {
-                document.getElementById('statusMsg').innerText = "Error: cleaners.json missing.";
+                document.getElementById('statusMsg').innerText = "Error loading staff list.";
                 console.error(err);
             });
 
@@ -93,18 +96,22 @@
 
             let notes = document.getElementById('notes').value.trim();
             
-            // --- EMOJI VERSION OF COMPACT MESSAGE ---
-            let msg = "✅ *ROOM " + room + " READY*\n";
-            msg += "✨ *By:* " + activeCleaner.name + "\n";
-            msg += "🕒 *Time:* " + new Date().toLocaleString() + "\n";
+            // Building the message with safe formatting to avoid [?] symbols
+            let msg = "✅ ROOM " + room + " READY\n";
+            msg += "Staff: " + activeCleaner.name + "\n";
+            msg += "Time: " + new Date().toLocaleString() + "\n";
             
             if(notes) {
-                msg += "📝 *Notes:* " + notes + "\n";
+                msg += "Notes: " + notes + "\n";
             } else {
-                msg += "👍 *Status:* All items checked OK\n";
+                msg += "Status: All items checked OK\n";
             }
+            
+            msg += "---------------------------";
 
-            window.location.href = "https://wa.me/" + MANAGER_PHONE + "?text=" + encodeURIComponent(msg);
+            // Opening WhatsApp without a number so the user picks the group
+            const url = "https://wa.me/?text=" + encodeURIComponent(msg);
+            window.location.href = url;
         }
     </script>
 </body>
