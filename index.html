@@ -35,7 +35,7 @@
 
         <div id="checklistArea" class="hidden">
             <div id="list"></div>
-            <textarea id="notes" placeholder="Notes / Issues (Optional)"></textarea>
+            <textarea id="notes" placeholder="Any problems? (Optional)"></textarea>
             <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">CHECK ALL BOXES!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
@@ -100,22 +100,27 @@
             }
 
             let noteText = document.getElementById('notes').value.trim();
-            
-            // Format Date and Time
             const now = new Date();
             const dateStr = now.toLocaleDateString();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+            // Logic for Header: CHECK NOTE vs READY
+            let statusHeader = noteText ? "CHECK NOTE" : "READY";
+
             let msg = "LA VERANDA HOTEL\n";
-            msg += "ROOM " + room + " READY\n";
+            msg += "ROOM " + room + " " + statusHeader + "\n";
             msg += "Staff: " + staffName + "\n";
             msg += "Date: " + dateStr + "\n";
             msg += "Time: " + timeStr + "\n";
-            msg += "Notes: " + (noteText || "None");
+            
+            if(noteText) {
+                msg += "Problem: " + noteText;
+            } else {
+                msg += "Problem: None";
+            }
 
             const finalUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
             
-            // Log out
             staffName = null;
             sessionStorage.clear();
 
