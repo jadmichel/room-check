@@ -52,7 +52,7 @@
         let activeCleaner = null;
 
         // --- FETCH CLEANERS FROM JSON FILE ---
-        fetch('cleaners.json')
+        fetch('cleaners.json?v=' + Date.now())
             .then(response => {
                 if (!response.ok) throw new Error('File not found');
                 return response.json();
@@ -113,3 +113,4 @@
     </script>
 </body>
 </html>
+
