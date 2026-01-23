@@ -55,7 +55,6 @@
         let staffData = [];
         let staffName = null;
 
-        // Fetch staff list
         fetch('cleaners.json?v=' + Date.now())
             .then(r => r.json())
             .then(data => {
@@ -79,11 +78,9 @@
             const staffDiv = document.getElementById('staffDisplay');
             staffDiv.innerText = "Staff: " + staffName;
             staffDiv.classList.remove('hidden');
-
             const checklistArea = document.getElementById('checklistArea');
             const listDiv = document.getElementById('list');
             checklistArea.classList.remove('hidden');
-            
             listDiv.innerHTML = ""; 
             CHECKS.forEach((text, i) => {
                 listDiv.innerHTML += `
@@ -97,21 +94,28 @@
         function send() {
             const boxes = document.querySelectorAll('.chk');
             const allChecked = Array.from(boxes).every(b => b.checked);
-            
             if (!allChecked) {
                 document.getElementById('warn').style.display = 'block';
                 return;
             }
 
             let noteText = document.getElementById('notes').value.trim();
-            let msg = "LA VERANDA HOTEL\nROOM " + room + " READY\n";
+            
+            // Format Date and Time
+            const now = new Date();
+            const dateStr = now.toLocaleDateString();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            let msg = "LA VERANDA HOTEL\n";
+            msg += "ROOM " + room + " READY\n";
             msg += "Staff: " + staffName + "\n";
-            msg += "Time: " + new Date().toLocaleTimeString() + "\n";
+            msg += "Date: " + dateStr + "\n";
+            msg += "Time: " + timeStr + "\n";
             msg += "Notes: " + (noteText || "None");
 
             const finalUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
             
-            // LOG OUT LOGIC: Clear variables and UI
+            // Log out
             staffName = null;
             sessionStorage.clear();
 
@@ -119,7 +123,6 @@
                 <div class="success">
                     <h2>REPORT SENT</h2>
                     <p>Redirecting to WhatsApp...</p>
-                    <p style="color:#666; font-size:12px;">Staff logged out automatically.</p>
                     <button onclick="location.reload()" style="background:#1a73e8; color:white; border:none; padding:15px; border-radius:8px; width:100%; cursor:pointer;">Start New Room</button>
                 </div>`;
 
