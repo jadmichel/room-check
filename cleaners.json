@@ -1,4 +1,18 @@
 [
-    { "name": "tiron", "password": "t123" },
-    { "name": "gayash", "password": "g456" }
+    {
+        "name": "tiron",
+        "password": "t123"
+    },
+    {
+        "name": "gayash",
+        "password": "g456"
+    },
+    {
+        "name": "maria",
+        "password": "m789"
+    },
+    {
+        "name": "randa",
+        "password": "r10"
+    }
 ]
