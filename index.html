@@ -7,16 +7,21 @@
     <style>
         body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f0f2f5; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h2 { margin-top: 0; color: #1a73e8; }
-        .item { display: flex; align-items: flex-start; margin-bottom: 15px; }
-        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; flex-shrink: 0; }
-        button { background-color: #25D366; color: white; border: none; padding: 16px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        h2 { margin-top: 0; color: #1a73e8; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .item { display: flex; align-items: flex-start; margin-bottom: 15px; padding: 5px; border-radius: 5px; }
+        .item:active { background-color: #fdfdfd; }
+        input[type="checkbox"] { width: 24px; height: 24px; margin-right: 12px; flex-shrink: 0; cursor: pointer; }
+        label { font-size: 16px; cursor: pointer; line-height: 1.4; }
+        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .error-msg { color: #d93025; font-weight: bold; display: none; margin-bottom: 10px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2 id="roomTitle">Room ...</h2>
+        <div id="cleanerDisplay" style="color:#666; margin-bottom: 15px;"></div>
         <div id="checklist"></div>
+        <div id="error" class="error-msg">⚠️ Please complete ALL items!</div>
         <button onclick="sendWhatsApp()">SEND TO WHATSAPP</button>
     </div>
 
@@ -50,27 +55,41 @@
             alert("Wrong password!");
             document.body.innerHTML = "<h2>Access Denied</h2>";
         } else {
+            document.getElementById('cleanerDisplay').innerText = "Cleaner: " + cleaner.name;
             const listDiv = document.getElementById('checklist');
             CHECKS.forEach((text, i) => {
-                listDiv.innerHTML += `<div class="item"><input type="checkbox" id="c${i}"><label for="c${i}">${text}</label></div>`;
+                listDiv.innerHTML += `
+                    <div class="item">
+                        <input type="checkbox" id="c${i}">
+                        <label for="c${i}">${text}</label>
+                    </div>`;
             });
         }
 
         function sendWhatsApp() {
-            let allDone = true;
-            let msg = `ROOM ${room} REPORT\n`;
-            msg += `Cleaner: ${cleaner.name}\n`;
-            msg += `Time: ${new Date().toLocaleString()}\n\n`;
-            msg += `--- CHECKLIST ---\n`;
-            
-            CHECKS.forEach((text, i) => {
-                const isChecked = document.getElementById('c'+i).checked;
-                if(!isChecked) allDone = false;
-                // Use standard text [YES] / [NO] to avoid character errors
-                msg += `${i+1}. [${isChecked ? "YES" : "NO"}] ${text}\n`;
+            let incomplete = false;
+            // CHECK IF EVERYTHING IS TICKED
+            CHECKS.forEach((_, i) => {
+                if(!document.getElementById('c'+i).checked) incomplete = true;
             });
 
-            msg += `\nOVERALL STATUS: ${allDone ? "READY" : "NOT READY"}`;
+            if(incomplete) {
+                document.getElementById('error').style.display = 'block';
+                alert("You cannot send the report until all tasks are finished.");
+                return;
+            }
+
+            document.getElementById('error').style.display = 'none';
+            
+            // Build message with safe emojis
+            let msg = `✅ Room ${room} - READY\n`;
+            msg += `By: ${cleaner.name}\n`;
+            msg += `Time: ${new Date().toLocaleString()}\n\n`;
+            msg += `Checklist:`;
+            
+            CHECKS.forEach((text, i) => {
+                msg += `\n${i+1}. [✅] ${text}`;
+            });
 
             window.location.href = `https://wa.me/${MANAGER_PHONE}?text=${encodeURIComponent(msg)}`;
         }
