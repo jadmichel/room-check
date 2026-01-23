@@ -1,18 +1,38 @@
 [
     {
-        "name": "tiron",
-        "password": "t123"
+        "name": "Tiron",
+        "password": "t2021"
     },
     {
-        "name": "gayash",
-        "password": "g456"
+        "name": "Gayash",
+        "password": "g2021"
     },
     {
-        "name": "maria",
-        "password": "m789"
+        "name": "Mahandeep Kaur",
+        "password": "mk2025"
     },
     {
-        "name": "randa",
-        "password": "r10"
+        "name": "Tanou",
+        "password": "ta2025"
+    },
+    {
+        "name": "Deborah",
+        "password": "db2025"
+    },
+    {
+        "name": "Akhil",
+        "password": "akh111"
+    },
+    {
+        "name": "New Cleaner 1",
+        "password": "1nc2026"
+    },
+    {
+        "name": "New Cleaner 2",
+        "password": "2nc2026"
+    },
+    {
+        "name": "New Cleaner 3",
+        "password": "3nc2026"
     }
 ]
