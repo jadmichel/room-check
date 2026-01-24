@@ -22,6 +22,7 @@
         .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
         
+        /* Gray inputs */
         input, select { 
             width: 100%; 
             padding: 12px; 
@@ -159,15 +160,15 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
-        // "Zero Width Space" (\u200B) prevents WhatsApp from turning times into blue links
-        const z = "\u200B"; 
+        // "Modifier Colon" (\uA789). It looks like ":" but WhatsApp ignores it.
+        const c = "\uA789"; 
 
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
-        msg += "EST. CHECKOUT: " + checkout.replace(":", z+":") + "\n";
+        msg += "EST. CHECKOUT: " + checkout.replace(":", c) + "\n";
         
         if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
@@ -175,13 +176,15 @@
         
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
-        msg += "- Reception: 08" + z + ":00 - Midnight\n";
-        msg += "- Breakfast: 08" + z + ":00 - 12" + z + ":00\n";
         
-        // Kitchen time on a new line
-        msg += "- Dinner Kitchen:\n  18" + z + ":00 - 22" + z + ":00\n";
+        // Using 'c' variable for times so they stay black
+        msg += "- Reception: 08" + c + "00 - Midnight\n";
+        msg += "- Breakfast: 08" + c + "00 - 12" + c + "00\n";
         
-        msg += "- Standard Checkout: 12" + z + ":00\n";
+        // Kitchen on new line
+        msg += "- Dinner Kitchen:\n  18" + c + "00 - 22" + c + "00\n";
+        
+        msg += "- Standard Checkout: 12" + c + "00\n";
         msg += "- Reception Dial: 00\n";
         msg += "- Restaurant Dial: 01\n";
         
@@ -191,7 +194,7 @@
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            // Taxi time is usually safe to be blue (clickable for calendar), but we can fix it if you prefer
+            // Taxi time is left as standard colon because it is useful for the guest to click it to set a calendar reminder
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
             msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
