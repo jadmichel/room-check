@@ -27,7 +27,10 @@
         .taxi-options { display: flex; gap: 20px; margin-bottom: 10px; align-items: center; }
         .taxi-options input { width: auto; margin-bottom: 0; cursor: pointer; }
 
-        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .map-section { background: #e8f0fe; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px solid #c2d7fa; }
+        .map-btn { background-color: #4285F4; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 5px; }
+
+        button#sendBtn { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
         .footer { text-align: center; font-size: 11px; color: #999; margin-top: 15px; }
     </style>
@@ -43,20 +46,17 @@
 
     <div class="form-group">
         <label>Full Name (as per your reservation):</label>
-        <input type="text" id="guestName" placeholder="Enter your full name">
+        <input type="text" id="guestName" placeholder="Enter your full name" oninput="validate()">
 
         <label>Room Number (Optional):</label>
         <input type="text" id="roomNum" placeholder="e.g. 110">
 
-        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
-        
-        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b>.</p></div></div>
-        
-        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b>.</p></div></div>
-        
-        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open:<br><b>18:00 to 22:00</b>.</p></div></div>
-        
-        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Standard check-out is <b>before 12:00 PM</b>.</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b>.</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b>.</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open:<br><b>18:00 to 22:00</b>.</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Standard check-out is <b>before 12:00 PM</b>.</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: <b>00</b><br>Restaurant: <b>01</b></p></div></div>
 
         <label>Estimated Check-out Time:</label>
         <select id="estCheckout" onchange="checkLateTime(this.value)"></select>
@@ -74,17 +74,23 @@
             
             <div id="taxiFields" style="display:none; margin-top:10px; border-top: 1px solid #ccc; padding-top: 10px;">
                 <label>Date:</label>
-                <input type="date" id="taxiDate">
+                <input type="date" id="taxiDate" oninput="validate()">
                 <label>Time:</label>
-                <input type="time" id="taxiTime">
+                <input type="time" id="taxiTime" oninput="validate()">
                 <label>Pax & Luggage:</label>
                 <div style="display:flex; gap:10px;">
-                    <input type="number" id="taxiPax" placeholder="Persons">
-                    <input type="number" id="taxiBags" placeholder="Bags">
+                    <input type="number" id="taxiPax" placeholder="Persons" oninput="validate()">
+                    <input type="number" id="taxiBags" placeholder="Bags" oninput="validate()">
                 </div>
                 <label>Your phone number (in case needed by the taxi driver):</label>
-                <input type="tel" id="taxiPhone" placeholder="+357 ...">
+                <input type="tel" id="taxiPhone" placeholder="+357 ..." oninput="validate()">
             </div>
+        </div>
+
+        <div class="map-section">
+            <label style="color:#1a73e8; margin-bottom:0;">📍 Find Your Way Back</label>
+            <p style="font-size:12px; margin:5px 0;">Need directions to return to La Veranda?</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=La+Veranda+Hotel+Larnaca" target="_blank" class="map-btn">Open Google Maps</a>
         </div>
 
         <button id="sendBtn" onclick="send()" disabled>CONFIRM & SEND</button>
@@ -113,24 +119,38 @@
         validate();
     }
 
-    const checks = document.querySelectorAll('.confirm-check');
-    const btn = document.getElementById('sendBtn');
-    
     function validate() {
+        const name = document.getElementById('guestName').value.trim();
+        const checks = document.querySelectorAll('.confirm-check');
         const allInfoChecked = Array.from(checks).every(c => c.checked);
-        const taxiSelected = document.querySelector('input[name="taxiChoice"]:checked') !== null;
-        btn.disabled = !(allInfoChecked && taxiSelected);
-    }
+        
+        const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked');
+        let taxiReady = false;
 
-    checks.forEach(c => c.addEventListener('change', validate));
+        if (taxiChoice) {
+            if (taxiChoice.value === "no") {
+                taxiReady = true;
+            } else {
+                // If yes, check all taxi fields
+                const tDate = document.getElementById('taxiDate').value;
+                const tTime = document.getElementById('taxiTime').value;
+                const tPax = document.getElementById('taxiPax').value;
+                const tBags = document.getElementById('taxiBags').value;
+                const tPhone = document.getElementById('taxiPhone').value.trim();
+                if (tDate && tTime && tPax && tBags && tPhone) {
+                    taxiReady = true;
+                }
+            }
+        }
+
+        document.getElementById('sendBtn').disabled = !(name && allInfoChecked && taxiReady);
+    }
 
     function send() {
         const name = document.getElementById('guestName').value.trim();
         const room = document.getElementById('roomNum').value.trim() || "Not assigned";
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
-
-        if(!name) { alert("Please enter your name"); return; }
 
         let msg = "LA VERANDA HOTEL\n";
         msg += "WELCOME CONFIRMATION\n";
@@ -155,7 +175,6 @@
         }
         
         msg += "\nGuest confirmed reading all hotel information.";
-
         window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
     }
 </script>
