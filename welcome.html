@@ -11,22 +11,18 @@
         .logo-container img { max-width: 120px; height: auto; }
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; font-size: 22px; }
         
-        /* Info Sections with Checkboxes */
-        .info-card { display: flex; align-items: flex-start; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 12px; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
-        .info-card.checked { border-color: #25D366; background: #f0fff4; }
+        .info-card { display: flex; align-items: flex-start; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .info-card input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; margin-top: 3px; cursor: pointer; }
         .info-content { flex: 1; }
-        .info-title { font-weight: bold; color: #1a73e8; font-size: 14px; text-transform: uppercase; display: block; }
+        .info-title { font-weight: bold; color: #1a73e8; font-size: 13px; text-transform: uppercase; display: block; }
         .info-text { font-size: 15px; margin: 2px 0 0 0; }
 
-        /* Forms */
         .form-group { margin-top: 20px; padding-top: 15px; border-top: 2px solid #eee; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
         
-        .taxi-box { background: #fff9e6; border: 1px solid #ffeeba; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .late-checkout { display: flex; align-items: center; background: #e8f0fe; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
-        .late-checkout input { width: auto; margin-right: 10px; margin-bottom: 0; }
+        #lateNotice { background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; border: 1px solid #ffeeba; display: none; }
+        .taxi-box { background: #f0f4f8; border: 1px solid #d1d9e0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
 
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
@@ -40,98 +36,109 @@
         <img src="/room-check/La Veranda LOGO.png" alt="La Veranda Logo">
     </div>
     
-    <h2>Guest Check-in</h2>
+    <h2>Guest Welcome</h2>
 
-    <div class="info-card" id="card1"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🕒 Check-out Time</span><p class="info-text">Standard check-out is <b>12:00 PM</b>.</p></div></div>
-    <div class="info-card" id="card2"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🍳 Breakfast</span><p class="info-text">Reception/Breakfast: <b>08:00 to 12:00</b>.</p></div></div>
-    <div class="info-card" id="card3"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🍽️ Dinner</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b>.</p></div></div>
-    <div class="info-card" id="card4"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🔑 Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
-    <div class="info-card" id="card5"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">📞 Internal Dial</span><p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p></div></div>
+    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Standard check-out is <b>12:00 PM</b>.</p></div></div>
+    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Breakfast</span><p class="info-text">Reception/Breakfast: <b>08:00 to 12:00</b>.</p></div></div>
+    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Dinner</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b>.</p></div></div>
+    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
+    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p></div></div>
 
     <div class="form-group">
-        <label>Full Name (as in reservation):</label>
-        <input type="text" id="guestName" placeholder="Enter your name">
+        <label>Full Name:</label>
+        <input type="text" id="guestName" placeholder="Name as per reservation">
 
         <label>Room Number (Optional):</label>
         <input type="text" id="roomNum" placeholder="e.g. 110">
 
         <label>Estimated Check-out Time:</label>
-        <select id="estCheckout"></select>
+        <select id="estCheckout" onchange="checkLateTime(this.value)"></select>
 
-        <div class="late-checkout">
-            <input type="checkbox" id="lateRequest">
-            <span>I request a late check-out (extra charge applies)</span>
+        <div id="lateNotice">
+            <b>Note:</b> Check-out is maximum at 12:00. Would you like to request a late check-out at an extra charge? Rates are available at reception (subject to availability).
         </div>
 
         <div class="taxi-box">
-            <label style="color:#856404">🚖 Request a Taxi?</label>
-            <input type="checkbox" id="taxiNeeded" onclick="document.getElementById('taxiFields').style.display = this.checked ? 'block' : 'none'"> Yes, I need a taxi
+            <label>🚖 Need a Taxi?</label>
+            <input type="checkbox" id="taxiNeeded" onclick="toggleTaxi()"> Yes, please book a taxi
             
             <div id="taxiFields" style="display:none; margin-top:10px;">
-                <label>Date & Time:</label>
-                <input type="datetime-local" id="taxiTime">
+                <label>Date:</label>
+                <input type="date" id="taxiDate">
+                <label>Time:</label>
+                <input type="time" id="taxiTime">
                 <label>Pax & Luggage:</label>
                 <div style="display:flex; gap:10px;">
                     <input type="number" id="taxiPax" placeholder="Persons">
                     <input type="number" id="taxiBags" placeholder="Bags">
                 </div>
-                <label>Contact Phone for Driver:</label>
+                <label>Taxi Contact Phone:</label>
                 <input type="tel" id="taxiPhone" placeholder="+357 ...">
-                <p style="font-size:11px; color:#856404;">*We will confirm availability and price shortly.</p>
             </div>
         </div>
 
         <button id="sendBtn" onclick="send()">CONFIRM & SEND</button>
     </div>
-    <p class="footer">Please check all boxes above to enable the button.</p>
+    <p class="footer">Tick all boxes above to enable sending.</p>
 </div>
 
 <script>
-    // Populate 24h Time Options
     const select = document.getElementById('estCheckout');
     for(let i=0; i<24; i++) {
         let hour = i < 10 ? '0'+i : i;
         let opt = hour + ":00";
         let el = document.createElement("option");
         el.textContent = opt; el.value = opt;
-        if(i===11) el.selected = true; // Default to 11:00
+        if(i===11) el.selected = true;
         select.appendChild(el);
     }
 
-    // Logic to enable button only if all info boxes are ticked
+    function checkLateTime(val) {
+        const hour = parseInt(val.split(":")[0]);
+        // Show notice if hour is 13:00 to 23:00 or 00:00 to 06:00 (early morning)
+        document.getElementById('lateNotice').style.display = (hour > 12 || hour < 7) ? 'block' : 'none';
+    }
+
+    function toggleTaxi() {
+        document.getElementById('taxiFields').style.display = document.getElementById('taxiNeeded').checked ? 'block' : 'none';
+    }
+
     const checks = document.querySelectorAll('.confirm-check');
     const btn = document.getElementById('sendBtn');
-    
-    function validate() {
-        let allChecked = Array.from(checks).every(c => c.checked);
-        btn.disabled = !allChecked;
-    }
+    function validate() { btn.disabled = !Array.from(checks).every(c => c.checked); }
     checks.forEach(c => c.addEventListener('change', validate));
     validate();
 
     function send() {
         const name = document.getElementById('guestName').value.trim();
-        const room = document.getElementById('roomNum').value.trim() || "Not Assigned";
+        const room = document.getElementById('roomNum').value.trim() || "Not assigned";
         const checkout = document.getElementById('estCheckout').value;
-        const late = document.getElementById('lateRequest').checked ? "YES" : "NO";
         const taxi = document.getElementById('taxiNeeded').checked;
 
         if(!name) { alert("Please enter your name"); return; }
 
-        let msg = "🏨 *LA VERANDA: NEW CHECK-IN*\n";
-        msg += "👤 Guest: " + name + "\n";
-        msg += "🔑 Room: " + room + "\n";
-        msg += "🕙 Est. Checkout: " + checkout + "\n";
-        msg += "⏳ Late Checkout Request: " + late + "\n";
+        let msg = "LA VERANDA HOTEL\n";
+        msg += "WELCOME CONFIRMATION\n";
+        msg += "--------------------------\n";
+        msg += "Guest: " + name + "\n";
+        msg += "Room: " + room + "\n";
+        msg += "Est. Checkout: " + checkout + "\n";
         
+        const hour = parseInt(checkout.split(":")[0]);
+        if (hour > 12 || hour < 7) {
+            msg += "Note: Late check-out requested (subject to charge/availability)\n";
+        }
+
         if(taxi) {
-            msg += "\n🚖 *TAXI REQUESTED:*\n";
-            msg += "- Date/Time: " + document.getElementById('taxiTime').value + "\n";
+            msg += "\nTAXI REQUESTED:\n";
+            msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
+            msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
+            msg += "_We will confirm price and availability shortly._\n";
         }
         
-        msg += "\n✅ _Guest confirmed reading all hotel information._";
+        msg += "\nGuest confirmed reading all hotel information.";
 
         window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
     }
