@@ -59,7 +59,7 @@
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: <b>00</b><br>Restaurant: <b>01</b></p></div></div>
 
         <label>Estimated Check-out Time:</label>
-        <select id="estCheckout" onchange="checkLateTime(this.value)"></select>
+        <select id="estCheckout" onchange="checkLateTime(this.value); validate();"></select>
 
         <div id="lateNotice">
             <b>Note:</b> Check-out is maximum at 12:00 PM. If you do not wish to pay extra charges, please ensure your check-out time is set to 12:00 PM or before. Late check-outs are subject to extra charges and availability.
@@ -73,29 +73,29 @@
             </div>
             
             <div id="taxiFields" style="display:none; margin-top:10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                <p style="font-size:13px; color:#1a73e8; margin-bottom:10px;"><i>We will send you the price and if you agree we send you the taxi confirmation.</i></p>
+                
                 <label>Date:</label>
                 <input type="date" id="taxiDate" oninput="validate()">
                 <label>Time:</label>
                 <input type="time" id="taxiTime" oninput="validate()">
-                <label>Pax & Luggage:</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="taxiPax" placeholder="Persons" oninput="validate()">
-                    <input type="number" id="taxiBags" placeholder="Bags" oninput="validate()">
-                </div>
-                <label>Your phone number (in case needed by the taxi driver):</label>
+                <label>Number of Persons:</label>
+                <input type="number" id="taxiPax" placeholder="e.g. 2" oninput="validate()">
+                <label>Number of Bags:</label>
+                <input type="number" id="taxiBags" placeholder="e.g. 2" oninput="validate()">
+                <label>Your phone number (needed for driver):</label>
                 <input type="tel" id="taxiPhone" placeholder="+357 ..." oninput="validate()">
             </div>
         </div>
 
         <div class="map-section">
             <label style="color:#1a73e8; margin-bottom:0;">📍 Find Your Way Back</label>
-            <p style="font-size:12px; margin:5px 0;">Need directions to return to La Veranda?</p>
             <a href="https://www.google.com/maps/search/?api=1&query=La+Veranda+Hotel+Larnaca" target="_blank" class="map-btn">Open Google Maps</a>
         </div>
 
         <button id="sendBtn" onclick="send()" disabled>CONFIRM & SEND</button>
     </div>
-    <p class="footer">Please complete all fields and tick all boxes to enable sending.</p>
+    <p class="footer">Form must be fully completed to enable sending.</p>
 </div>
 
 <script>
@@ -131,7 +131,7 @@
             if (taxiChoice.value === "no") {
                 taxiReady = true;
             } else {
-                // If yes, check all taxi fields
+                // If yes, ALL taxi fields are MANDATORY
                 const tDate = document.getElementById('taxiDate').value;
                 const tTime = document.getElementById('taxiTime').value;
                 const tPax = document.getElementById('taxiPax').value;
@@ -161,14 +161,15 @@
         
         const hour = parseInt(checkout.split(":")[0]);
         if (hour > 12 || hour < 7) {
-            msg += "Note: Late check-out requested.\n";
+            msg += "⚠️ LATE CHECK-OUT REQUESTED (Extra charge applies)\n";
         }
 
         if(taxiChoice === "yes") {
-            msg += "\nTAXI REQUESTED:\n";
+            msg += "\n🚖 TAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
-            msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
+            msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
+            msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
         } else {
             msg += "\nTaxi: Not requested.\n";
