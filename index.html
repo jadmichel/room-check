@@ -12,12 +12,12 @@
         .staff-tag { text-align: center; color: #1a73e8; font-weight: bold; margin-bottom: 20px; font-size: 14px; text-transform: uppercase; }
         .item { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .item-num { font-weight: bold; margin-right: 8px; color: #1a73e8; min-width: 20px; }
-        .status-box { width: 28px; height: 28px; border: 2px solid #ccc; border-radius: 4px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; background: white; transition: 0.2s; }
+        .status-box { width: 32px; height: 32px; border: 2px solid #ccc; border-radius: 6px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 22px; background: white; transition: 0.2s; }
         .status-ok { color: #25D366; border-color: #25D366; background: #e8f5e9; }
         .status-bad { color: #d93025; border-color: #d93025; background: #ffebee; }
         input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
         .note-label { font-size: 14px; color: #d93025; font-weight: bold; margin-top: 15px; display: block; }
-        textarea { width: 100%; height: 100px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        textarea { width: 100%; height: 120px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .login-btn { background-color: #1a73e8; }
         .hidden { display: none; }
@@ -36,16 +36,28 @@
             <p id="loginError" style="color:red; display:none; text-align:center;">Wrong Password!</p>
         </div>
         <div id="checklistArea" class="hidden">
-            <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Tap 1x: OK (✓) | Tap 2x: Problem (X)</p>
+            <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Tap 1: OK (✓) | Tap 2: Problem (X)</p>
             <div id="list"></div>
             <label class="note-label">Problem details:</label>
-            <textarea id="notes" placeholder="Details here..."></textarea>
+            <textarea id="notes" placeholder="Describe the problem here..."></textarea>
             <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 10 ITEMS MUST BE MARKED!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
     <script>
-        const CHECKS = ["AC functional; remote OK","TV functional; remote OK","AC switch ON & taped","Fridge switch ON & taped","Windows/Balcony locked","Safe empty & open","Lights & Fan working","Bathroom OK (No leaks)","Towels OK; hair dryer OK","Room clean & fresh"];
+        const CHECKS = [
+            "AC operates correctly; remote & batteries OK",
+            "TV operates correctly; remote & batteries OK",
+            "AC switch ON & taped",
+            "Mini-fridge switch ON & taped",
+            "Windows & balcony door close & lock",
+            "Safe empty & left open",
+            "All lighting & toilet fan operational",
+            "Bathroom equipment OK (No leaks)",
+            "Towels correct; hair dryer OK",
+            "Room fully clean & smelling fresh"
+        ];
+
         let itemStates = new Array(10).fill(0);
         let staffData = [];
         let staffName = null;
@@ -65,9 +77,7 @@
                 staffName = user.name; 
                 document.getElementById('loginArea').classList.add('hidden'); 
                 showList(); 
-            } else { 
-                document.getElementById('loginError').style.display = 'block'; 
-            }
+            } else { document.getElementById('loginError').style.display = 'block'; }
         }
 
         function toggleItem(index) {
@@ -80,7 +90,8 @@
             let noteArea = document.getElementById('notes');
             let problems = [];
             itemStates.forEach((state, i) => { 
-                if (state === 2) problems.push("Item " + (i + 1) + ": "); 
+                // AUTO-WRITE: "Item X (Description): "
+                if (state === 2) problems.push("Item " + (i + 1) + " (" + CHECKS[i] + "): "); 
             });
             noteArea.value = problems.join("\n");
         }
@@ -113,8 +124,6 @@
             const now = new Date();
             let msg = "LA VERANDA HOTEL\nROOM " + room + " " + (hasProblem ? "CHECK NOTE" : "READY") + "\n";
             msg += "Staff: " + staffName + "\nDate: " + now.toLocaleDateString() + "\nTime: " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + "\n";
-            
-            // CLEANED UP PROBLEM TEXT
             msg += "Problem: " + (noteText || "All is good");
 
             window.location.href = "https://wa.me/?text=" + encodeURIComponent(msg);
