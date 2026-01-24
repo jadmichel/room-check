@@ -17,12 +17,11 @@
         .info-card input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; margin-top: 3px; cursor: pointer; }
         .info-content { flex: 1; }
         .info-title { font-weight: bold; color: #333; font-size: 13px; text-transform: uppercase; display: block; }
-        .info-text { font-size: 15px; margin: 2px 0 0 0; color: #333; }
+        .info-text { font-size: 15px; margin: 2px 0 0 0; color: #333; line-height: 1.4; }
 
         .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
         
-        /* Fixed gray fill for all inputs */
         input, select { 
             width: 100%; 
             padding: 12px; 
@@ -31,7 +30,7 @@
             border-radius: 8px; 
             font-size: 15px; 
             box-sizing: border-box;
-            background-color: #f2f2f2; /* Light gray fill */
+            background-color: #f2f2f2; 
             color: #333;
             display: block;
         }
@@ -69,7 +68,7 @@
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: C1703Y</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">08:00 till Midnight</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">08:00 to 12:00</p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open from: 18:00 till 22:00</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open:<br>18:00 till 22:00</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Before 12:00 PM</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: 00<br>Restaurant: 01</p></div></div>
 
@@ -160,12 +159,15 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
+        // "Zero Width Space" (\u200B) prevents WhatsApp from turning times into blue links
+        const z = "\u200B"; 
+
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
-        msg += "EST. CHECKOUT: " + checkout.replace(":", ".") + "\n";
+        msg += "EST. CHECKOUT: " + checkout.replace(":", z+":") + "\n";
         
         if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
@@ -173,10 +175,13 @@
         
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
-        msg += "- Reception: 08.00 till Midnight\n";
-        msg += "- Breakfast: 08.00 to 12.00\n";
-        msg += "- Dinner Kitchen: 18.00 to 22.00\n";
-        msg += "- Standard Checkout: 12.00\n";
+        msg += "- Reception: 08" + z + ":00 - Midnight\n";
+        msg += "- Breakfast: 08" + z + ":00 - 12" + z + ":00\n";
+        
+        // Kitchen time on a new line
+        msg += "- Dinner Kitchen:\n  18" + z + ":00 - 22" + z + ":00\n";
+        
+        msg += "- Standard Checkout: 12" + z + ":00\n";
         msg += "- Reception Dial: 00\n";
         msg += "- Restaurant Dial: 01\n";
         
@@ -186,7 +191,8 @@
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            msg += "- Time: " + document.getElementById('taxiTime').value.replace(":", ".") + "\n";
+            // Taxi time is usually safe to be blue (clickable for calendar), but we can fix it if you prefer
+            msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
             msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
