@@ -137,12 +137,15 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
+        // We use a special colon character \u02D0 to trick WhatsApp so it doesn't turn times blue
+        const c = "\u02D0"; 
+
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
-        msg += "EST. CHECKOUT: " + checkout + "\n";
+        msg += "EST. CHECKOUT: " + checkout.replace(":", c) + "\n";
         
         if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
@@ -150,10 +153,10 @@
         
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
-        msg += "- Reception: 08:00 - Midnight\n";
-        msg += "- Breakfast: 08:00 - 12:00\n";
-        msg += "- Dinner Kitchen: 18:00 - 22:00\n";
-        msg += "- Standard Checkout: 12:00\n";
+        msg += "- Reception: 08" + c + "00 - Midnight\n";
+        msg += "- Breakfast: 08" + c + "00 - 12" + c + "00\n";
+        msg += "- Dinner Kitchen: 18" + c + "00 - 22" + c + "00\n";
+        msg += "- Standard Checkout: 12" + c + "00\n";
         msg += "- Reception Dial: 00\n";
         msg += "- Restaurant Dial: 01\n";
         
@@ -163,7 +166,7 @@
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
+            msg += "- Time: " + document.getElementById('taxiTime').value.replace(":", c) + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
             msg += "We will send you the price for approval soon.\n";
