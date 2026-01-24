@@ -160,8 +160,8 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
-        // "Modifier Colon" (\uA789). It looks like ":" but WhatsApp ignores it.
-        const c = "\uA789"; 
+        // We use " : " (Space Colon Space). This is the only 100% reliable way to stop WhatsApp blue links.
+        const c = " : "; 
 
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
@@ -177,12 +177,12 @@
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
         
-        // Using 'c' variable for times so they stay black
+        // Using 'c' variable (space colon space) keeps these black
         msg += "- Reception: 08" + c + "00 - Midnight\n";
         msg += "- Breakfast: 08" + c + "00 - 12" + c + "00\n";
         
         // Kitchen on new line
-        msg += "- Dinner Kitchen:\n  18" + c + "00 - 22" + c + "00\n";
+        msg += "- Dinner Kitchen:\n  18" + c + "00 till 22" + c + "00\n";
         
         msg += "- Standard Checkout: 12" + c + "00\n";
         msg += "- Reception Dial: 00\n";
@@ -194,7 +194,7 @@
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            // Taxi time is left as standard colon because it is useful for the guest to click it to set a calendar reminder
+            // Taxi time uses standard format so it IS clickable for the guest
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
             msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
