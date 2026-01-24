@@ -22,7 +22,7 @@
         .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
         
-        /* Gray inputs */
+        /* Unified light gray fill for all inputs */
         input, select { 
             width: 100%; 
             padding: 12px; 
@@ -93,9 +93,9 @@
                 <label>Time:</label>
                 <input type="time" id="taxiTime" oninput="validate()">
                 <label>Number of Persons:</label>
-                <input type="number" id="taxiPax" placeholder="Enter number of persons" oninput="validate()">
+                <input type="number" id="taxiPax" placeholder="Number of persons" oninput="validate()">
                 <label>Number of Bags:</label>
-                <input type="number" id="taxiBags" placeholder="Enter number of bags" oninput="validate()">
+                <input type="number" id="taxiBags" placeholder="Number of bags" oninput="validate()">
                 <label>Your Phone Number:</label>
                 <input type="tel" id="taxiPhone" placeholder="+357 ..." oninput="validate()">
             </div>
@@ -160,15 +160,12 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
-        // We use " : " (Space Colon Space). This is the only 100% reliable way to stop WhatsApp blue links.
-        const c = " : "; 
-
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
-        msg += "EST. CHECKOUT: " + checkout.replace(":", c) + "\n";
+        msg += "EST. CHECKOUT: " + checkout + "\n";
         
         if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
@@ -176,15 +173,13 @@
         
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
+        msg += "- Reception: 08:00 till Midnight\n";
+        msg += "- Breakfast: 08:00 to noon\n"; // Changed to noon to stop blue link
         
-        // Using 'c' variable (space colon space) keeps these black
-        msg += "- Reception: 08" + c + "00 - Midnight\n";
-        msg += "- Breakfast: 08" + c + "00 - 12" + c + "00\n";
+        // Kitchen on separate line
+        msg += "- Dinner Kitchen:\n  18:00 till 22:00\n";
         
-        // Kitchen on new line
-        msg += "- Dinner Kitchen:\n  18" + c + "00 till 22" + c + "00\n";
-        
-        msg += "- Standard Checkout: 12" + c + "00\n";
+        msg += "- Standard Checkout: 12:00\n";
         msg += "- Reception Dial: 00\n";
         msg += "- Restaurant Dial: 01\n";
         
@@ -194,7 +189,6 @@
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            // Taxi time uses standard format so it IS clickable for the guest
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
             msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
