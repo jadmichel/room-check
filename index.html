@@ -36,16 +36,17 @@
             <p id="loginError" style="color:red; display:none; text-align:center;">Wrong Password!</p>
         </div>
         <div id="checklistArea" class="hidden">
-            <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Tap 1: OK (✓) | Tap 2: Problem (X)</p>
+            <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Tap 1: OK (✓) | Tap 2: Found Item/Problem (X)</p>
             <div id="list"></div>
-            <label class="note-label">Problem details:</label>
-            <textarea id="notes" placeholder="Describe the problem here..."></textarea>
-            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 10 ITEMS MUST BE MARKED!</p>
+            <label class="note-label">Problem / Found Items details:</label>
+            <textarea id="notes" placeholder="Describe items or problems here..."></textarea>
+            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 11 ITEMS MUST BE MARKED!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
     <script>
         const CHECKS = [
+            "Previous guest forgot items in the room (Checked)",
             "AC operates correctly; remote & batteries OK",
             "TV operates correctly; remote & batteries OK",
             "AC switch ON & taped",
@@ -58,7 +59,7 @@
             "Room fully clean & smelling fresh"
         ];
 
-        let itemStates = new Array(10).fill(0);
+        let itemStates = new Array(CHECKS.length).fill(0);
         let staffData = [];
         let staffName = null;
         const params = new URLSearchParams(window.location.search);
@@ -90,8 +91,10 @@
             let noteArea = document.getElementById('notes');
             let problems = [];
             itemStates.forEach((state, i) => { 
-                // AUTO-WRITE: "Item X (Description): "
-                if (state === 2) problems.push("Item " + (i + 1) + " (" + CHECKS[i] + "): "); 
+                if (state === 2) {
+                    const label = (i === 0) ? "Guest forgot items" : CHECKS[i];
+                    problems.push("Item " + (i + 1) + " (" + label + "): "); 
+                }
             });
             noteArea.value = problems.join("\n");
         }
