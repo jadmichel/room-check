@@ -22,7 +22,7 @@
         .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
         
-        /* Unified gray placeholder style for all inputs */
+        /* Fixed gray fill for all inputs */
         input, select { 
             width: 100%; 
             padding: 12px; 
@@ -31,11 +31,12 @@
             border-radius: 8px; 
             font-size: 15px; 
             box-sizing: border-box;
-            background-color: #f9f9f9;
+            background-color: #f2f2f2; /* Light gray fill */
             color: #333;
+            display: block;
         }
         
-        input::placeholder { color: #999; }
+        input::placeholder { color: #888; }
         
         #lateNotice { background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; border: 1px solid #ffeeba; display: none; }
         .taxi-box { background: #f0f4f8; border: 1px solid #d1d9e0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
@@ -68,7 +69,7 @@
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: C1703Y</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">08:00 till Midnight</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">08:00 to 12:00</p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open: 18:00 to 22:00</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open from: 18:00 till 22:00</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Before 12:00 PM</p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: 00<br>Restaurant: 01</p></div></div>
 
@@ -164,13 +165,12 @@
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
-        msg += "EST. CHECKOUT: " + checkout + "\n";
+        msg += "EST. CHECKOUT: " + checkout.replace(":", ".") + "\n";
         
         if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
         }
         
-        // We use "08.00" (dot instead of colon) for the info section to stop blue links
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
         msg += "- Reception: 08.00 till Midnight\n";
@@ -181,12 +181,12 @@
         msg += "- Restaurant Dial: 01\n";
         
         msg += "\nGOOGLE MAPS LOCATION:\n";
-        msg += "https://www.google.com/maps?q=34.892751,33.635221\n";
+        msg += "https://www.google.com/maps?q=34.892751,33.635221";
 
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
+            msg += "- Time: " + document.getElementById('taxiTime').value.replace(":", ".") + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
             msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
