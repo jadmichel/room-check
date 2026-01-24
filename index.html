@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>La Veranda Hotel</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f0f2f5; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        body { font-family: sans-serif; padding: 20px; background-color: #f0f2f5; color: #1c1e21; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 450px; margin: auto; }
         h2 { margin-top: 0; color: #1a73e8; text-align: center; margin-bottom: 5px; }
         h3 { text-align: center; color: #606770; margin-top: 0; margin-bottom: 5px; }
         .staff-tag { text-align: center; color: #1a73e8; font-weight: bold; margin-bottom: 20px; font-size: 14px; text-transform: uppercase; }
-        .item { display: flex; align-items: center; margin-bottom: 15px; font-size: 17px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
-        input[type="checkbox"] { width: 28px; height: 28px; margin-right: 15px; cursor: pointer; }
+        .item { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        .item-num { font-weight: bold; margin-right: 8px; color: #1a73e8; min-width: 20px; }
+        input[type="checkbox"] { width: 24px; height: 24px; margin-right: 12px; cursor: pointer; flex-shrink: 0; }
         input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        textarea { width: 100%; height: 80px; margin-top: 15px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; }
+        .note-label { font-size: 14px; color: #d93025; font-weight: bold; margin-top: 15px; display: block; }
+        textarea { width: 100%; height: 80px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .login-btn { background-color: #1a73e8; }
         .hidden { display: none; }
@@ -35,17 +37,25 @@
 
         <div id="checklistArea" class="hidden">
             <div id="list"></div>
-            <textarea id="notes" placeholder="Any problems? (Optional)"></textarea>
-            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">CHECK ALL BOXES!</p>
+            <label class="note-label">Problem? (Write Item # and details):</label>
+            <textarea id="notes" placeholder="e.g. Item 3: tape is missing"></textarea>
+            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ CHECK ALL 10 BOXES!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
 
     <script>
         const CHECKS = [
-            "AC Checked", "TV Checked", "AC Switch ON", "Fridge ON", 
-            "Windows Locked", "Safe Empty", "Lights OK", 
-            "Bathroom OK", "Towels OK", "Room Clean"
+            "AC operates correctly; remote & batteries OK",
+            "TV operates correctly; remote & batteries OK",
+            "AC switch ON & taped",
+            "Mini-fridge switch ON & taped",
+            "Windows & balcony door close & lock",
+            "Safe empty & left open",
+            "All lighting & toilet fan operational",
+            "Bathroom equipment OK (No leaks)",
+            "Towels correct; hair dryer OK",
+            "Room fully clean & smelling fresh"
         ];
 
         const params = new URLSearchParams(window.location.search);
@@ -85,6 +95,7 @@
             CHECKS.forEach((text, i) => {
                 listDiv.innerHTML += `
                     <div class="item">
+                        <span class="item-num">${i + 1}.</span>
                         <input type="checkbox" class="chk" id="i${i}">
                         <label for="i${i}">${text}</label>
                     </div>`;
@@ -104,7 +115,6 @@
             const dateStr = now.toLocaleDateString();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            // Logic for Header: CHECK NOTE vs READY
             let statusHeader = noteText ? "CHECK NOTE" : "READY";
 
             let msg = "LA VERANDA HOTEL\n";
@@ -113,10 +123,11 @@
             msg += "Date: " + dateStr + "\n";
             msg += "Time: " + timeStr + "\n";
             
+            // Note Choice Logic
             if(noteText) {
                 msg += "Problem: " + noteText;
             } else {
-                msg += "Problem: None";
+                msg += "Problem: All is good";
             }
 
             const finalUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
