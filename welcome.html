@@ -7,15 +7,16 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #f4f7f9; color: #333; }
         .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        .logo-container { text-align: center; margin-bottom: 15px; }
+        .logo-container { text-align: center; margin-bottom: 10px; }
         .logo-container img { max-width: 120px; height: auto; }
+        .website-link { text-align: center; margin-bottom: 20px; font-size: 13px; }
+        .website-link a { color: #1a73e8; text-decoration: none; }
+        
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; font-size: 22px; }
         
         .info-card { display: flex; align-items: flex-start; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .info-card input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; margin-top: 3px; cursor: pointer; }
         .info-content { flex: 1; }
-        
-        /* Unified color for info text */
         .info-title { font-weight: bold; color: #333; font-size: 13px; text-transform: uppercase; display: block; }
         .info-text { font-size: 15px; margin: 2px 0 0 0; color: #333; }
 
@@ -40,6 +41,9 @@
 <div class="container">
     <div class="logo-container">
         <img src="/room-check/La Veranda LOGO.png" alt="La Veranda Hotel Logo">
+    </div>
+    <div class="website-link">
+        <a href="https://www.laverandadelarnacahotel.com" target="_blank">www.laverandadelarnacahotel.com</a>
     </div>
     
     <h2>Guest Welcome</h2>
@@ -141,28 +145,28 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
-        let msg = "LA VERANDA HOTEL - WELCOME SUMMARY\n";
+        let msg = "LA VERANDA HOTEL\n";
+        msg += "www.laverandadelarnacahotel.com\n";
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
         msg += "EST. CHECKOUT: " + checkout + "\n";
         
-        const hour = parseInt(checkout.split(":")[0]);
-        if (hour > 12 || hour < 7) {
-            msg += "LATE CHECK-OUT REQUESTED: We will send you the price if late check-out is possible.\n";
+        if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
+            msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
         }
         
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
-        msg += "- Reception: 08:00 - 00:00\n";
+        msg += "- Reception: 08:00 - Midnight\n";
         msg += "- Breakfast: 08:00 - 12:00\n";
         msg += "- Dinner Kitchen: 18:00 - 22:00\n";
         msg += "- Standard Checkout: 12:00\n";
         msg += "- Reception Dial: 00\n";
         msg += "- Restaurant Dial: 01\n";
         
-        msg += "\nMAP LOCATION:\n";
-        msg += "https://www.google.com/maps?q=34.892751,33.635221\n";
+        msg += "\nGOOGLE MAPS LOCATION:\n";
+        msg += "https://www.google.com/maps?q=34.892751,33.635221";
 
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
@@ -170,11 +174,11 @@
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
-            msg += "Note: We will send you the price for approval soon.\n";
+            msg += "We will send you the price for approval soon.\n";
         }
         
         msg += "\n---------------------------------\n";
-        msg += "Thank you for choosing La Veranda!";
+        msg += "Thank you for choosing La Veranda Hotel!";
 
         window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
     }
