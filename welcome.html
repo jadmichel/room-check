@@ -14,8 +14,10 @@
         .info-card { display: flex; align-items: flex-start; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
         .info-card input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; margin-top: 3px; cursor: pointer; }
         .info-content { flex: 1; }
-        .info-title { font-weight: bold; color: #1a73e8; font-size: 13px; text-transform: uppercase; display: block; }
-        .info-text { font-size: 15px; margin: 2px 0 0 0; }
+        
+        /* Unified color for info text */
+        .info-title { font-weight: bold; color: #333; font-size: 13px; text-transform: uppercase; display: block; }
+        .info-text { font-size: 15px; margin: 2px 0 0 0; color: #333; }
 
         .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
@@ -25,14 +27,12 @@
         
         .taxi-box { background: #f0f4f8; border: 1px solid #d1d9e0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .taxi-options { display: flex; gap: 20px; margin-bottom: 10px; align-items: center; }
-        .taxi-options input { width: auto; margin-bottom: 0; cursor: pointer; }
-
+        
         .map-section { background: #e8f0fe; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px solid #c2d7fa; }
         .map-btn { background-color: #4285F4; color: white; border: none; padding: 12px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 5px; }
 
         button#sendBtn { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:disabled { background-color: #ccc; cursor: not-allowed; }
-        .footer { text-align: center; font-size: 11px; color: #999; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -51,18 +51,18 @@
         <label>Room Number (Optional):</label>
         <input type="text" id="roomNum" placeholder="e.g. 110">
 
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b></p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b></p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b></p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Before <b>12:00 PM</b></p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: C1703Y</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">08:00 till Midnight</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">08:00 to 12:00</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open: 18:00 to 22:00</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Before 12:00 PM</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: 00<br>Restaurant: 01</p></div></div>
 
         <label>Estimated Check-out Time:</label>
         <select id="estCheckout" onchange="checkLateTime(this.value); validate();"></select>
 
         <div id="lateNotice">
-            <b>Note:</b> Standard check-out is by 12:00 PM. Late check-outs may incur extra charges.
+            Note: Standard check-out is by 12:00 PM. Late check-outs may incur extra charges.
         </div>
 
         <div class="taxi-box">
@@ -74,22 +74,17 @@
             
             <div id="taxiFields" style="display:none; margin-top:10px; border-top: 1px solid #ccc; padding-top: 10px;">
                 <p style="font-size:13px; color:#1a73e8; margin-bottom:10px;"><i>We will send you the price and if you agree we send you the taxi confirmation.</i></p>
-                <label>Date:</label>
-                <input type="date" id="taxiDate" oninput="validate()">
-                <label>Time:</label>
-                <input type="time" id="taxiTime" oninput="validate()">
-                <label>Persons:</label>
-                <input type="number" id="taxiPax" oninput="validate()">
-                <label>Bags:</label>
-                <input type="number" id="taxiBags" oninput="validate()">
-                <label>Phone Number:</label>
-                <input type="tel" id="taxiPhone" oninput="validate()">
+                <label>Date:</label><input type="date" id="taxiDate" oninput="validate()">
+                <label>Time:</label><input type="time" id="taxiTime" oninput="validate()">
+                <label>Persons:</label><input type="number" id="taxiPax" oninput="validate()">
+                <label>Bags:</label><input type="number" id="taxiBags" oninput="validate()">
+                <label>Phone Number:</label><input type="tel" id="taxiPhone" oninput="validate()">
             </div>
         </div>
 
         <div class="map-section">
-            <label style="color:#1a73e8;">Hotel Address</label>
-            <p style="font-size:14px; margin:5px 0;">Michael Aggelou 3, Larnaka 6028</p>
+            <label style="color:#1a73e8;">Hotel Location</label>
+            <p style="font-size:14px; margin:5px 0;">Michael Aggelou 3, Larnaka</p>
             <a href="https://www.google.com/maps?q=34.892751,33.635221" target="_blank" class="map-btn">Open Google Maps</a>
         </div>
 
@@ -146,36 +141,36 @@
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
-        // Header
         let msg = "LA VERANDA HOTEL - WELCOME SUMMARY\n";
         msg += "---------------------------------\n";
         msg += "GUEST: " + name + "\n";
         msg += "ROOM: " + room + "\n";
         msg += "EST. CHECKOUT: " + checkout + "\n";
         
-        if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
-            msg += "*LATE CHECK-OUT REQUESTED*\n";
+        const hour = parseInt(checkout.split(":")[0]);
+        if (hour > 12 || hour < 7) {
+            msg += "LATE CHECK-OUT REQUESTED: We will send you the price if late check-out is possible.\n";
         }
         
-        // Hotel Info section for guest to review later
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C1703Y\n";
         msg += "- Reception: 08:00 - 00:00\n";
         msg += "- Breakfast: 08:00 - 12:00\n";
         msg += "- Dinner Kitchen: 18:00 - 22:00\n";
         msg += "- Standard Checkout: 12:00\n";
-        msg += "- Internal Dial: Reception (00), Restaurant (01)\n";
+        msg += "- Reception Dial: 00\n";
+        msg += "- Restaurant Dial: 01\n";
+        
+        msg += "\nMAP LOCATION:\n";
+        msg += "https://www.google.com/maps?q=34.892751,33.635221\n";
 
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
-            msg += "- Passengers: " + document.getElementById('taxiPax').value + "\n";
-            msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
+            msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
-            msg += "*We will send you the price for approval soon.*\n";
-        } else {
-            msg += "\nTaxi: No request.\n";
+            msg += "Note: We will send you the price for approval soon.\n";
         }
         
         msg += "\n---------------------------------\n";
