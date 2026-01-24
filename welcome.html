@@ -52,10 +52,10 @@
         <input type="text" id="roomNum" placeholder="e.g. 110">
 
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b>.</p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b>.</p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b>.</p></div></div>
-        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Before <b>12:00 PM</b>.</p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b></p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b></p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b></p></div></div>
+        <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Before <b>12:00 PM</b></p></div></div>
         <div class="info-card"><input type="checkbox" class="confirm-check" onchange="validate()"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p></div></div>
 
         <label>Estimated Check-out Time:</label>
@@ -73,6 +73,7 @@
             </div>
             
             <div id="taxiFields" style="display:none; margin-top:10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                <p style="font-size:13px; color:#1a73e8; margin-bottom:10px;"><i>We will send you the price and if you agree we send you the taxi confirmation.</i></p>
                 <label>Date:</label>
                 <input type="date" id="taxiDate" oninput="validate()">
                 <label>Time:</label>
@@ -89,7 +90,7 @@
         <div class="map-section">
             <label style="color:#1a73e8;">Hotel Address</label>
             <p style="font-size:14px; margin:5px 0;">Michael Aggelou 3, Larnaka 6028</p>
-            <a href="https://www.google.com/maps/search/?api=1&query=34.892751,33.635221" target="_blank" class="map-btn">Open Google Maps</a>
+            <a href="https://www.google.com/maps?q=34.892751,33.635221" target="_blank" class="map-btn">Open Google Maps</a>
         </div>
 
         <button id="sendBtn" onclick="send()" disabled>CONFIRM & SEND</button>
@@ -141,31 +142,45 @@
 
     function send() {
         const name = document.getElementById('guestName').value.trim();
-        const room = document.getElementById('roomNum').value.trim() || "Not assigned";
+        const room = document.getElementById('roomNum').value.trim() || "To be assigned";
         const checkout = document.getElementById('estCheckout').value;
         const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
-        let msg = "LA VERANDA HOTEL\n";
-        msg += "WELCOME CONFIRMATION\n";
-        msg += "--------------------------\n";
-        msg += "Guest: " + name + "\n";
-        msg += "Room: " + room + "\n";
-        msg += "Est. Checkout: " + checkout + "\n";
+        // Header
+        let msg = "LA VERANDA HOTEL - WELCOME SUMMARY\n";
+        msg += "---------------------------------\n";
+        msg += "GUEST: " + name + "\n";
+        msg += "ROOM: " + room + "\n";
+        msg += "EST. CHECKOUT: " + checkout + "\n";
         
         if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
-            msg += "LATE CHECK-OUT REQUESTED\n";
+            msg += "*LATE CHECK-OUT REQUESTED*\n";
         }
+        
+        // Hotel Info section for guest to review later
+        msg += "\nHOTEL INFORMATION:\n";
+        msg += "- Main Door Code: C1703Y\n";
+        msg += "- Reception: 08:00 - 00:00\n";
+        msg += "- Breakfast: 08:00 - 12:00\n";
+        msg += "- Dinner Kitchen: 18:00 - 22:00\n";
+        msg += "- Standard Checkout: 12:00\n";
+        msg += "- Internal Dial: Reception (00), Restaurant (01)\n";
 
         if(taxiChoice === "yes") {
             msg += "\nTAXI REQUESTED:\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
-            msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
+            msg += "- Passengers: " + document.getElementById('taxiPax').value + "\n";
             msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
+            msg += "*We will send you the price for approval soon.*\n";
+        } else {
+            msg += "\nTaxi: No request.\n";
         }
         
-        msg += "\nConfirmed reading hotel info.";
+        msg += "\n---------------------------------\n";
+        msg += "Thank you for choosing La Veranda!";
+
         window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
     }
 </script>
