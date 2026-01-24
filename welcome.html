@@ -19,7 +19,7 @@
 
         .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
         
         #lateNotice { background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; border: 1px solid #ffeeba; display: none; }
         
@@ -39,7 +39,7 @@
 
 <div class="container">
     <div class="logo-container">
-        <img src="/room-check/La Veranda LOGO.png" alt="La Veranda Logo">
+        <img src="/room-check/La Veranda LOGO.png" alt="La Veranda Hotel Logo">
     </div>
     
     <h2>Guest Welcome</h2>
@@ -74,16 +74,21 @@
             
             <div id="taxiFields" style="display:none; margin-top:10px; border-top: 1px solid #ccc; padding-top: 10px;">
                 <p style="font-size:13px; color:#1a73e8; margin-bottom:10px;"><i>We will send you the price and if you agree we send you the taxi confirmation.</i></p>
-                <label>Date:</label>
-                <input type="date" id="taxiDate" oninput="validate()">
-                <label>Time:</label>
-                <input type="time" id="taxiTime" oninput="validate()">
+                
+                <label>Date (DD/MM/YYYY):</label>
+                <input type="text" id="taxiDate" placeholder="e.g. 25/01/2026" oninput="validate()">
+                
+                <label>Time (HH:MM):</label>
+                <input type="text" id="taxiTime" placeholder="e.g. 14:30" oninput="validate()">
+                
                 <label>Number of Persons:</label>
-                <input type="number" id="taxiPax" oninput="validate()">
+                <input type="number" id="taxiPax" placeholder="e.g. 2" oninput="validate()">
+                
                 <label>Number of Bags:</label>
-                <input type="number" id="taxiBags" oninput="validate()">
+                <input type="number" id="taxiBags" placeholder="e.g. 2" oninput="validate()">
+                
                 <label>Your phone number:</label>
-                <input type="tel" id="taxiPhone" oninput="validate()">
+                <input type="tel" id="taxiPhone" placeholder="+357 ..." oninput="validate()">
             </div>
         </div>
 
@@ -130,8 +135,8 @@
             if (taxiChoice.value === "no") {
                 taxiReady = true;
             } else {
-                const tDate = document.getElementById('taxiDate').value;
-                const tTime = document.getElementById('taxiTime').value;
+                const tDate = document.getElementById('taxiDate').value.trim();
+                const tTime = document.getElementById('taxiTime').value.trim();
                 const tPax = document.getElementById('taxiPax').value;
                 const tBags = document.getElementById('taxiBags').value;
                 const tPhone = document.getElementById('taxiPhone').value.trim();
