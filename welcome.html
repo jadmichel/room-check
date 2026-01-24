@@ -17,7 +17,7 @@
         .info-title { font-weight: bold; color: #1a73e8; font-size: 13px; text-transform: uppercase; display: block; }
         .info-text { font-size: 15px; margin: 2px 0 0 0; }
 
-        .form-group { margin-top: 20px; padding-top: 15px; border-top: 2px solid #eee; }
+        .form-group { margin-top: 10px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
         
@@ -41,19 +41,22 @@
     
     <h2>Guest Welcome</h2>
 
-    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b>.</p></div></div>
-    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Standard check-out is <b>12:00 PM</b>.</p></div></div>
-    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b>.</p></div></div>
-    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b>.</p></div></div>
-    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
-    <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Internal Dial</span><p class="info-text">Reception: <b>00</b><br>Restaurant: <b>01</b></p></div></div>
-
     <div class="form-group">
-        <label>Full Name:</label>
-        <input type="text" id="guestName" placeholder="Name as per reservation">
+        <label>Full Name (as per your reservation):</label>
+        <input type="text" id="guestName" placeholder="Enter your full name">
 
         <label>Room Number (Optional):</label>
         <input type="text" id="roomNum" placeholder="e.g. 110">
+
+        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
+        
+        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Reception Hours</span><p class="info-text">Open: <b>08:00 till Midnight</b>.</p></div></div>
+        
+        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Breakfast Time</span><p class="info-text">Open: <b>08:00 to 12:00</b>.</p></div></div>
+        
+        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Dinner Time</span><p class="info-text">Kitchen open:<br><b>18:00 to 22:00</b>.</p></div></div>
+        
+        <div class="info-card"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">Check-out Time</span><p class="info-text">Standard check-out is <b>before 12:00 PM</b>.</p></div></div>
 
         <label>Estimated Check-out Time:</label>
         <select id="estCheckout" onchange="checkLateTime(this.value)"></select>
@@ -79,14 +82,14 @@
                     <input type="number" id="taxiPax" placeholder="Persons">
                     <input type="number" id="taxiBags" placeholder="Bags">
                 </div>
-                <label>Taxi Contact Phone:</label>
+                <label>Your phone number (in case needed by the taxi driver):</label>
                 <input type="tel" id="taxiPhone" placeholder="+357 ...">
             </div>
         </div>
 
         <button id="sendBtn" onclick="send()" disabled>CONFIRM & SEND</button>
     </div>
-    <p class="footer">Please check all boxes above to confirm you have read the info.</p>
+    <p class="footer">Please complete all fields and tick all boxes to enable sending.</p>
 </div>
 
 <script>
@@ -148,7 +151,7 @@
             msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
             msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
         } else {
-            msg += "\nTaxi: No requested.\n";
+            msg += "\nTaxi: Not requested.\n";
         }
         
         msg += "\nGuest confirmed reading all hotel information.";
