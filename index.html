@@ -12,12 +12,12 @@
         .staff-tag { text-align: center; color: #1a73e8; font-weight: bold; margin-bottom: 20px; font-size: 14px; text-transform: uppercase; }
         .item { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .item-num { font-weight: bold; margin-right: 8px; color: #1a73e8; min-width: 20px; }
-        .status-box { width: 32px; height: 32px; border: 2px solid #ccc; border-radius: 6px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 22px; background: white; transition: 0.2s; }
+        .status-box { width: 34px; height: 34px; border: 2px solid #ccc; border-radius: 6px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; background: white; transition: 0.2s; }
         .status-ok { color: #25D366; border-color: #25D366; background: #e8f5e9; }
         .status-bad { color: #d93025; border-color: #d93025; background: #ffebee; }
         input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
         .note-label { font-size: 14px; color: #d93025; font-weight: bold; margin-top: 15px; display: block; }
-        textarea { width: 100%; height: 120px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        textarea { width: 100%; height: 140px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .login-btn { background-color: #1a73e8; }
         .hidden { display: none; }
@@ -38,7 +38,7 @@
         <div id="checklistArea" class="hidden">
             <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Tap 1: OK (✓) | Tap 2: Problem (X)</p>
             <div id="list"></div>
-            <label class="note-label">Report Details:</label>
+            <label class="note-label">Problem Details:</label>
             <textarea id="notes" placeholder="Fill details here..."></textarea>
             <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 20 ITEMS MUST BE MARKED!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
@@ -52,7 +52,7 @@
             "European adaptor is in an electrical socket",
             "AC operates correctly; remote & batteries OK",
             "TV operates correctly; remote & batteries OK",
-            "AC switch is ON & taped (both units in suites)",
+            "AC switch is ON & taped",
             "Mini-fridge switch ON & taped",
             "Windows & balcony door close & lock properly",
             "Safe box is empty & open",
@@ -66,6 +66,29 @@
             "Amenities are correct",
             "Hair dryer OK",
             "Room fully clean & smelling fresh"
+        ];
+
+        const PROBLEM_TEXTS = [
+            "Previous guest forgot : ",
+            "Curtains are not well attached ",
+            "Telephone is not in ringing mode ",
+            "There is no European adaptor ",
+            "AC remote needs batteries ",
+            "TV not operating ",
+            "AC switch is not taped ",
+            "Mini-fridge switch is not taped ",
+            "Windows & balcony door don't close & lock properly ",
+            "Safe box is closed ",
+            "Some lighting are not ok ",
+            "Toilet fan is not operational ",
+            "WC seat cover is not well fixed ",
+            "Shower flexible is leaking ",
+            "Shower glass door doesn't open and close properly ",
+            "Towels or linen are missing ",
+            "Soap is not full or missing ",
+            "Amenities are missing ",
+            "Hair dryer is missing ",
+            "Room bad smell "
         ];
 
         let itemStates = new Array(CHECKS.length).fill(0);
@@ -83,11 +106,8 @@
         function checkLogin() {
             const p = document.getElementById('passInput').value;
             const user = staffData.find(u => u.password === p);
-            if (user) { 
-                staffName = user.name; 
-                document.getElementById('loginArea').classList.add('hidden'); 
-                showList(); 
-            } else { document.getElementById('loginError').style.display = 'block'; }
+            if (user) { staffName = user.name; document.getElementById('loginArea').classList.add('hidden'); showList(); }
+            else { document.getElementById('loginError').style.display = 'block'; }
         }
 
         function toggleItem(index) {
@@ -101,11 +121,7 @@
             let reports = [];
             itemStates.forEach((state, i) => { 
                 if (state === 2) {
-                    if (i === 0) {
-                        reports.push("1- The guest has forgot ");
-                    } else {
-                        reports.push("item " + (i + 1) + " issue with " + CHECKS[i] + ": ");
-                    }
+                    reports.push((i + 1) + "- " + PROBLEM_TEXTS[i]);
                 }
             });
             noteArea.value = reports.join("\n");
@@ -130,17 +146,13 @@
         }
 
         function send() {
-            if (!itemStates.every(s => s > 0)) { 
-                document.getElementById('warn').style.display = 'block'; 
-                return; 
-            }
+            if (!itemStates.every(s => s > 0)) { document.getElementById('warn').style.display = 'block'; return; }
             let noteText = document.getElementById('notes').value.trim();
             const hasProblem = itemStates.includes(2) || noteText.length > 0;
             const now = new Date();
             let msg = "LA VERANDA HOTEL\nROOM " + room + " " + (hasProblem ? "CHECK NOTE" : "READY") + "\n";
             msg += "Staff: " + staffName + "\nDate: " + now.toLocaleDateString() + "\nTime: " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + "\n";
             msg += "Problem: " + (noteText || "All is good");
-
             window.location.href = "https://wa.me/?text=" + encodeURIComponent(msg);
             sessionStorage.clear();
             document.getElementById('app').innerHTML = `<div class="success"><h2>REPORT SENT</h2><p>Logged out.</p><button onclick="location.reload()" style="background:#1a73e8; color:white; border:none; padding:15px; border-radius:8px; width:100%;">New Room</button></div>`;
@@ -148,4 +160,3 @@
     </script>
 </body>
 </html>
-
