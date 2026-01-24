@@ -5,98 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Welcome - La Veranda Hotel</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo-container img { max-width: 150px; height: auto; }
-        h2 { color: #1a73e8; text-align: center; margin-bottom: 25px; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 0; }
-        .info-section { margin-bottom: 20px; padding: 15px; background: #fdfdfd; border-left: 4px solid #1a73e8; border-radius: 4px; }
-        .info-title { font-weight: bold; color: #1a73e8; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 13px; }
-        .info-text { font-size: 16px; margin: 0; }
-        .input-group { margin-top: 25px; padding-top: 20px; border-top: 2px solid #f0f2f5; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #128C7E; }
-        .footer { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #f4f7f9; color: #333; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        .logo-container { text-align: center; margin-bottom: 15px; }
+        .logo-container img { max-width: 120px; height: auto; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; font-size: 22px; }
+        
+        /* Info Sections with Checkboxes */
+        .info-card { display: flex; align-items: flex-start; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 12px; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
+        .info-card.checked { border-color: #25D366; background: #f0fff4; }
+        .info-card input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; margin-top: 3px; cursor: pointer; }
+        .info-content { flex: 1; }
+        .info-title { font-weight: bold; color: #1a73e8; font-size: 14px; text-transform: uppercase; display: block; }
+        .info-text { font-size: 15px; margin: 2px 0 0 0; }
+
+        /* Forms */
+        .form-group { margin-top: 20px; padding-top: 15px; border-top: 2px solid #eee; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        
+        .taxi-box { background: #fff9e6; border: 1px solid #ffeeba; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .late-checkout { display: flex; align-items: center; background: #e8f0fe; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+        .late-checkout input { width: auto; margin-right: 10px; margin-bottom: 0; }
+
+        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .footer { text-align: center; font-size: 11px; color: #999; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="logo-container">
-        <img src="La Veranda LOGO.png" alt="La Veranda Logo">
+        <img src="/room-check/La Veranda LOGO.png" alt="La Veranda Logo">
     </div>
     
-    <h2>Welcome!</h2>
+    <h2>Guest Check-in</h2>
 
-    <div class="info-section">
-        <span class="info-title">🕒 Check-out Time</span>
-        <p class="info-text">Standard check-out is at <b>12:00 PM</b>.</p>
+    <div class="info-card" id="card1"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🕒 Check-out Time</span><p class="info-text">Standard check-out is <b>12:00 PM</b>.</p></div></div>
+    <div class="info-card" id="card2"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🍳 Breakfast</span><p class="info-text">Reception/Breakfast: <b>08:00 to 12:00</b>.</p></div></div>
+    <div class="info-card" id="card3"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🍽️ Dinner</span><p class="info-text">Kitchen open: <b>18:00 to 22:00</b>.</p></div></div>
+    <div class="info-card" id="card4"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">🔑 Access Code</span><p class="info-text">Main Door: <b>C1703Y</b></p></div></div>
+    <div class="info-card" id="card5"><input type="checkbox" class="confirm-check"><div class="info-content"><span class="info-title">📞 Internal Dial</span><p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p></div></div>
+
+    <div class="form-group">
+        <label>Full Name (as in reservation):</label>
+        <input type="text" id="guestName" placeholder="Enter your name">
+
+        <label>Room Number (Optional):</label>
+        <input type="text" id="roomNum" placeholder="e.g. 110">
+
+        <label>Estimated Check-out Time:</label>
+        <select id="estCheckout"></select>
+
+        <div class="late-checkout">
+            <input type="checkbox" id="lateRequest">
+            <span>I request a late check-out (extra charge applies)</span>
+        </div>
+
+        <div class="taxi-box">
+            <label style="color:#856404">🚖 Request a Taxi?</label>
+            <input type="checkbox" id="taxiNeeded" onclick="document.getElementById('taxiFields').style.display = this.checked ? 'block' : 'none'"> Yes, I need a taxi
+            
+            <div id="taxiFields" style="display:none; margin-top:10px;">
+                <label>Date & Time:</label>
+                <input type="datetime-local" id="taxiTime">
+                <label>Pax & Luggage:</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="taxiPax" placeholder="Persons">
+                    <input type="number" id="taxiBags" placeholder="Bags">
+                </div>
+                <label>Contact Phone for Driver:</label>
+                <input type="tel" id="taxiPhone" placeholder="+357 ...">
+                <p style="font-size:11px; color:#856404;">*We will confirm availability and price shortly.</p>
+            </div>
+        </div>
+
+        <button id="sendBtn" onclick="send()">CONFIRM & SEND</button>
     </div>
-
-    <div class="info-section">
-        <span class="info-title">🍳 Breakfast & Reception</span>
-        <p class="info-text">Open <b>08:00 to 12:00</b>.</p>
-    </div>
-
-    <div class="info-section">
-        <span class="info-title">🍽️ Dinner & Kitchen</span>
-        <p class="info-text">The kitchen is open <b>18:00 to 22:00</b>.</p>
-    </div>
-
-    <div class="info-section">
-        <span class="info-title">🔑 Main Door Access</span>
-        <p class="info-text">Access Code: <b>C1703Y</b></p>
-    </div>
-
-    <div class="info-section">
-        <span class="info-title">📞 Internal Extensions</span>
-        <p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p>
-    </div>
-
-    <div class="input-group">
-        <label>Enter Room Number:</label>
-        <input type="number" id="roomNum" placeholder="e.g. 101">
-
-        <label>Est. Check-out Time:</label>
-        <select id="estCheckout">
-            <option value="Not sure yet">Decide later</option>
-            <option value="07:00 - 09:00">07:00 - 09:00</option>
-            <option value="09:00 - 11:00">09:00 - 11:00</option>
-            <option value="11:00 - 12:00">11:00 - 12:00</option>
-        </select>
-
-        <button onclick="confirmCheckIn()">CONFIRM & SEND</button>
-    </div>
-    
-    <p class="footer">By clicking, you confirm you have read the hotel info.</p>
+    <p class="footer">Please check all boxes above to enable the button.</p>
 </div>
 
 <script>
-    function confirmCheckIn() {
-        const room = document.getElementById('roomNum').value;
-        const estTime = document.getElementById('estCheckout').value;
+    // Populate 24h Time Options
+    const select = document.getElementById('estCheckout');
+    for(let i=0; i<24; i++) {
+        let hour = i < 10 ? '0'+i : i;
+        let opt = hour + ":00";
+        let el = document.createElement("option");
+        el.textContent = opt; el.value = opt;
+        if(i===11) el.selected = true; // Default to 11:00
+        select.appendChild(el);
+    }
 
-        if (!room) {
-            alert("Please enter your room number.");
-            return;
+    // Logic to enable button only if all info boxes are ticked
+    const checks = document.querySelectorAll('.confirm-check');
+    const btn = document.getElementById('sendBtn');
+    
+    function validate() {
+        let allChecked = Array.from(checks).every(c => c.checked);
+        btn.disabled = !allChecked;
+    }
+    checks.forEach(c => c.addEventListener('change', validate));
+    validate();
+
+    function send() {
+        const name = document.getElementById('guestName').value.trim();
+        const room = document.getElementById('roomNum').value.trim() || "Not Assigned";
+        const checkout = document.getElementById('estCheckout').value;
+        const late = document.getElementById('lateRequest').checked ? "YES" : "NO";
+        const taxi = document.getElementById('taxiNeeded').checked;
+
+        if(!name) { alert("Please enter your name"); return; }
+
+        let msg = "🏨 *LA VERANDA: NEW CHECK-IN*\n";
+        msg += "👤 Guest: " + name + "\n";
+        msg += "🔑 Room: " + room + "\n";
+        msg += "🕙 Est. Checkout: " + checkout + "\n";
+        msg += "⏳ Late Checkout Request: " + late + "\n";
+        
+        if(taxi) {
+            msg += "\n🚖 *TAXI REQUESTED:*\n";
+            msg += "- Date/Time: " + document.getElementById('taxiTime').value + "\n";
+            msg += "- Pax: " + document.getElementById('taxiPax').value + " | Bags: " + document.getElementById('taxiBags').value + "\n";
+            msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
         }
+        
+        msg += "\n✅ _Guest confirmed reading all hotel information._";
 
-        const receptionPhone = "35796276769"; 
-
-        let msg = "✨ WELCOME CONFIRMATION ✨\n";
-        msg += "Room: " + room + "\n";
-        msg += "Guest has read the hotel information.\n";
-        msg += "Estimated Checkout: " + estTime + "\n";
-        msg += "--------------------------\n";
-        msg += "Door Code: C1703Y\n";
-        msg += "Reception: 08:00-12:00\n";
-        msg += "Dinner: 18:00-22:00";
-
-        window.location.href = "https://wa.me/" + receptionPhone + "?text=" + encodeURIComponent(msg);
+        window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
     }
 </script>
-
 </body>
 </html>
