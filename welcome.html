@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome - La Veranda Hotel</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-container img { max-width: 150px; height: auto; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 25px; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 0; }
+        .info-section { margin-bottom: 20px; padding: 15px; background: #fdfdfd; border-left: 4px solid #1a73e8; border-radius: 4px; }
+        .info-title { font-weight: bold; color: #1a73e8; display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 13px; }
+        .info-text { font-size: 16px; margin: 0; }
+        .input-group { margin-top: 25px; padding-top: 20px; border-top: 2px solid #f0f2f5; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #128C7E; }
+        .footer { text-align: center; font-size: 12px; color: #888; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-container">
+        <img src="La Veranda LOGO.png" alt="La Veranda Logo">
+    </div>
+    
+    <h2>Welcome!</h2>
+
+    <div class="info-section">
+        <span class="info-title">🕒 Check-out Time</span>
+        <p class="info-text">Standard check-out is at <b>12:00 PM</b>.</p>
+    </div>
+
+    <div class="info-section">
+        <span class="info-title">🍳 Breakfast & Reception</span>
+        <p class="info-text">Open <b>08:00 to 12:00</b>.</p>
+    </div>
+
+    <div class="info-section">
+        <span class="info-title">🍽️ Dinner & Kitchen</span>
+        <p class="info-text">The kitchen is open <b>18:00 to 22:00</b>.</p>
+    </div>
+
+    <div class="info-section">
+        <span class="info-title">🔑 Main Door Access</span>
+        <p class="info-text">Access Code: <b>C1703Y</b></p>
+    </div>
+
+    <div class="info-section">
+        <span class="info-title">📞 Internal Extensions</span>
+        <p class="info-text">Reception: <b>00</b> | Restaurant: <b>01</b></p>
+    </div>
+
+    <div class="input-group">
+        <label>Enter Room Number:</label>
+        <input type="number" id="roomNum" placeholder="e.g. 101">
+
+        <label>Est. Check-out Time:</label>
+        <select id="estCheckout">
+            <option value="Not sure yet">Decide later</option>
+            <option value="07:00 - 09:00">07:00 - 09:00</option>
+            <option value="09:00 - 11:00">09:00 - 11:00</option>
+            <option value="11:00 - 12:00">11:00 - 12:00</option>
+        </select>
+
+        <button onclick="confirmCheckIn()">CONFIRM & SEND</button>
+    </div>
+    
+    <p class="footer">By clicking, you confirm you have read the hotel info.</p>
+</div>
+
+<script>
+    function confirmCheckIn() {
+        const room = document.getElementById('roomNum').value;
+        const estTime = document.getElementById('estCheckout').value;
+
+        if (!room) {
+            alert("Please enter your room number.");
+            return;
+        }
+
+        const receptionPhone = "35796276769"; 
+
+        let msg = "✨ WELCOME CONFIRMATION ✨\n";
+        msg += "Room: " + room + "\n";
+        msg += "Guest has read the hotel information.\n";
+        msg += "Estimated Checkout: " + estTime + "\n";
+        msg += "--------------------------\n";
+        msg += "Door Code: C1703Y\n";
+        msg += "Reception: 08:00-12:00\n";
+        msg += "Dinner: 18:00-22:00";
+
+        window.location.href = "https://wa.me/" + receptionPhone + "?text=" + encodeURIComponent(msg);
+    }
+</script>
+
+</body>
+</html>
