@@ -10,12 +10,17 @@
         h2 { margin-top: 0; color: #1a73e8; text-align: center; margin-bottom: 5px; }
         h3 { text-align: center; color: #606770; margin-top: 0; margin-bottom: 5px; }
         .staff-tag { text-align: center; color: #1a73e8; font-weight: bold; margin-bottom: 20px; font-size: 14px; text-transform: uppercase; }
-        .item { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        
+        /* Multi-state Toggle Styles */
+        .item { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; cursor: pointer; }
         .item-num { font-weight: bold; margin-right: 8px; color: #1a73e8; min-width: 20px; }
-        input[type="checkbox"] { width: 24px; height: 24px; margin-right: 12px; cursor: pointer; flex-shrink: 0; }
+        .status-box { width: 28px; height: 28px; border: 2px solid #ccc; border-radius: 4px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; background: white; }
+        .status-ok { color: #25D366; border-color: #25D366; }
+        .status-bad { color: #d93025; border-color: #d93025; }
+        
         input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
         .note-label { font-size: 14px; color: #d93025; font-weight: bold; margin-top: 15px; display: block; }
-        textarea { width: 100%; height: 80px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        textarea { width: 100%; height: 100px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
         button { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .login-btn { background-color: #1a73e8; }
         .hidden { display: none; }
@@ -36,10 +41,11 @@
         </div>
 
         <div id="checklistArea" class="hidden">
+            <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Tap 1x for OK (✓) | Tap 2x for Problem (X)</p>
             <div id="list"></div>
-            <label class="note-label">Problem? (Write Item # and details):</label>
-            <textarea id="notes" placeholder="e.g. Item 3: tape is missing"></textarea>
-            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ CHECK ALL 10 BOXES!</p>
+            <label class="note-label">Problems Found:</label>
+            <textarea id="notes" placeholder="Details of problems..."></textarea>
+            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 10 ITEMS MUST BE MARKED!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
@@ -58,12 +64,12 @@
             "Room fully clean & smelling fresh"
         ];
 
+        let itemStates = new Array(10).fill(0); // 0: empty, 1: OK, 2: Problem
+        let staffData = [];
+        let staffName = null;
         const params = new URLSearchParams(window.location.search);
         const room = params.get('r') || "Unknown";
         document.getElementById('roomDisplay').innerText = "Room " + room;
-
-        let staffData = [];
-        let staffName = null;
 
         fetch('cleaners.json?v=' + Date.now())
             .then(r => r.json())
@@ -79,70 +85,73 @@
                 staffName = user.name;
                 document.getElementById('loginArea').classList.add('hidden');
                 showList();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
+            } else { document.getElementById('loginError').style.display = 'block'; }
         }
 
-        function showList() {
-            const staffDiv = document.getElementById('staffDisplay');
-            staffDiv.innerText = "Staff: " + staffName;
-            staffDiv.classList.remove('hidden');
-            const checklistArea = document.getElementById('checklistArea');
+        function toggleItem(index) {
+            itemStates[index] = (itemStates[index] + 1) % 3;
+            renderItems();
+            updateNotesFromStates();
+        }
+
+        function updateNotesFromStates() {
+            let noteArea = document.getElementById('notes');
+            let problems = [];
+            itemStates.forEach((state, i) => {
+                if (state === 2) problems.push("Problem in item " + (i + 1) + ": ");
+            });
+            // Don't overwrite if cleaner already typed extra details, just manage the prefixes
+            noteArea.value = problems.join("\n");
+        }
+
+        function renderItems() {
             const listDiv = document.getElementById('list');
-            checklistArea.classList.remove('hidden');
-            listDiv.innerHTML = ""; 
+            listDiv.innerHTML = "";
             CHECKS.forEach((text, i) => {
+                let statusClass = "";
+                let statusChar = "";
+                if (itemStates[i] === 1) { statusClass = "status-ok"; statusChar = "✓"; }
+                if (itemStates[i] === 2) { statusClass = "status-bad"; statusChar = "✕"; }
+
                 listDiv.innerHTML += `
-                    <div class="item">
+                    <div class="item" onclick="toggleItem(${i})">
                         <span class="item-num">${i + 1}.</span>
-                        <input type="checkbox" class="chk" id="i${i}">
-                        <label for="i${i}">${text}</label>
+                        <div class="status-box ${statusClass}">${statusChar}</div>
+                        <label style="cursor:pointer;">${text}</label>
                     </div>`;
             });
         }
 
+        function showList() {
+            document.getElementById('staffDisplay').innerText = "Staff: " + staffName;
+            document.getElementById('staffDisplay').classList.remove('hidden');
+            document.getElementById('checklistArea').classList.remove('hidden');
+            renderItems();
+        }
+
         function send() {
-            const boxes = document.querySelectorAll('.chk');
-            const allChecked = Array.from(boxes).every(b => b.checked);
-            if (!allChecked) {
+            const allMarked = itemStates.every(s => s > 0);
+            if (!allMarked) {
                 document.getElementById('warn').style.display = 'block';
                 return;
             }
 
             let noteText = document.getElementById('notes').value.trim();
+            const hasProblem = itemStates.includes(2) || noteText.length > 0;
+            let statusHeader = hasProblem ? "CHECK NOTE" : "READY";
+
             const now = new Date();
-            const dateStr = now.toLocaleDateString();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            let statusHeader = noteText ? "CHECK NOTE" : "READY";
-
             let msg = "LA VERANDA HOTEL\n";
             msg += "ROOM " + room + " " + statusHeader + "\n";
             msg += "Staff: " + staffName + "\n";
-            msg += "Date: " + dateStr + "\n";
-            msg += "Time: " + timeStr + "\n";
-            
-            // Note Choice Logic
-            if(noteText) {
-                msg += "Problem: " + noteText;
-            } else {
-                msg += "Problem: All is good";
-            }
+            msg += "Date: " + now.toLocaleDateString() + "\n";
+            msg += "Time: " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + "\n";
+            msg += "Problem: " + (noteText || "All is good");
 
-            const finalUrl = "https://wa.me/?text=" + encodeURIComponent(msg);
+            window.location.href = "https://wa.me/?text=" + encodeURIComponent(msg);
             
-            staffName = null;
             sessionStorage.clear();
-
-            document.getElementById('app').innerHTML = `
-                <div class="success">
-                    <h2>REPORT SENT</h2>
-                    <p>Redirecting to WhatsApp...</p>
-                    <button onclick="location.reload()" style="background:#1a73e8; color:white; border:none; padding:15px; border-radius:8px; width:100%; cursor:pointer;">Start New Room</button>
-                </div>`;
-
-            window.location.href = finalUrl;
+            document.getElementById('app').innerHTML = `<div class="success"><h2>REPORT SENT</h2><p>Logged out.</p><button onclick="location.reload()" style="background:#1a73e8; color:white; border:none; padding:15px; border-radius:8px; width:100%;">New Room</button></div>`;
         }
     </script>
 </body>
