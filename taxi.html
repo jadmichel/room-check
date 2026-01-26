@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Request Taxi - La Veranda Hotel</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #f4f7f9; color: #333; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        .logo-container { text-align: center; margin-bottom: 10px; }
+        .logo-container img { max-width: 120px; height: auto; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; font-size: 22px; }
+        
+        .form-group { margin-top: 10px; }
+        label.input-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            box-sizing: border-box;
+            background-color: #f2f2f2; 
+            color: #333;
+            display: block;
+        }
+
+        input.error { border: 2px solid #ff4d4d; background-color: #fff5f5; }
+        .taxi-box { background: #f0f4f8; border: 1px solid #d1d9e0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .edit-note { font-size: 12px; color: #666; font-style: italic; margin-bottom: 10px; display: block; }
+        
+        button#sendBtn { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-container">
+        <img src="/room-check/La Veranda LOGO.png" alt="La Veranda Hotel Logo">
+    </div>
+    
+    <h2>Taxi Request</h2>
+
+    <div class="form-group">
+        <label class="input-label">Full Name:</label>
+        <input type="text" id="guestName" placeholder="Enter full name" oninput="this.classList.remove('error')">
+
+        <label class="input-label">Room Number:</label>
+        <input type="text" id="roomNum" placeholder="e.g. 110" oninput="this.classList.remove('error')">
+
+        <div class="taxi-box">
+            <span class="edit-note">You can change the destination below if needed:</span>
+            
+            <label class="input-label">From:</label>
+            <input type="text" id="taxiFrom" value="La Veranda Hotel" oninput="this.classList.remove('error')">
+            
+            <label class="input-label">To:</label>
+            <input type="text" id="taxiTo" value="Larnaca Airport" oninput="this.classList.remove('error')">
+
+            <label class="input-label">Date:</label>
+            <input type="date" id="taxiDate" oninput="this.classList.remove('error')">
+            
+            <label class="input-label">Time:</label>
+            <input type="time" id="taxiTime" oninput="this.classList.remove('error')">
+            
+            <label class="input-label">Number of Persons:</label>
+            <input type="number" id="taxiPax" placeholder="Number of persons" oninput="this.classList.remove('error')">
+            
+            <label class="input-label">Number of Bags:</label>
+            <input type="number" id="taxiBags" placeholder="Number of bags" oninput="this.classList.remove('error')">
+            
+            <label class="input-label">Your Phone Number:</label>
+            <input type="tel" id="taxiPhone" placeholder="+357 ..." oninput="this.classList.remove('error')">
+        </div>
+
+        <button id="sendBtn" onclick="send()">REQUEST TAXI VIA WHATSAPP</button>
+    </div>
+</div>
+
+<script>
+    function send() {
+        let isValid = true;
+        const fields = ['guestName', 'roomNum', 'taxiFrom', 'taxiTo', 'taxiDate', 'taxiTime', 'taxiPax', 'taxiBags', 'taxiPhone'];
+        
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) {
+                el.classList.add('error');
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            alert("Please fill in all fields before sending.");
+            return;
+        }
+
+        let msg = "LA VERANDA HOTEL\n";
+        msg += "NEW TAXI REQUEST\n";
+        msg += "---------------------------------\n";
+        msg += "GUEST: " + document.getElementById('guestName').value + "\n";
+        msg += "ROOM: " + document.getElementById('roomNum').value + "\n";
+        msg += "FROM: " + document.getElementById('taxiFrom').value + "\n";
+        msg += "TO: " + document.getElementById('taxiTo').value + "\n";
+        msg += "DATE: " + document.getElementById('taxiDate').value + "\n";
+        msg += "TIME: " + document.getElementById('taxiTime').value + "\n";
+        msg += "PAX: " + document.getElementById('taxiPax').value + "\n";
+        msg += "BAGS: " + document.getElementById('taxiBags').value + "\n";
+        msg += "CONTACT: " + document.getElementById('taxiPhone').value + "\n";
+        msg += "---------------------------------\n";
+        msg += "Please confirm the price for the guest.";
+
+        window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
+    }
+</script>
+</body>
+</html>
