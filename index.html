@@ -56,7 +56,7 @@
             <div id="list"></div>
             <label class="note-label">Report Details:</label>
             <textarea id="notes" placeholder="Fill details here..."></textarea>
-            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 21 ITEMS MUST BE MARKED!</p>
+            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 22 ITEMS MUST BE MARKED!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
@@ -72,19 +72,20 @@
             "Windows & balcony door close & lock properly", "Safe box is empty & open",
             "All lighting are ok", "Toilet fan is operational",
             "WC seat cover well fixed", "Shower flexible not leaking",
-            "Put water in the shower drain", // New Item 15
-            "Shower glass door open and close properly", // Shuffled to 16
+            "Put water in the shower drain", "Shower glass door open and close properly",
             "Towels correct and linen OK", "Soap are full in shower and lavatory", 
-            "Amenities are correct", "Hair dryer OK", "Room fully clean & smelling fresh"
+            "Amenities are correct", "Hair dryer OK", 
+            "Iron and iron board", // Item 21
+            "Room fully clean & smelling fresh" // Item 22
         ];
 
         const PROBLEM_TEXTS = [
-            "Previous guest forgot : ", "Curtains loose ", "Phone issue ", "Adaptor missing ",
-            "AC remote issue ", "TV issue ", "AC switch not taped ", "Fridge switch not taped ",
-            "Window/Door lock issue ", "Safe box closed ", "Lighting issue ", "Fan issue ",
-            "WC seat loose ", "Shower leaking ", "Drain dry ", // Issue for 15
-            "Shower door issue ", "Linen issue ", "Soap missing ", 
-            "Amenities missing ", "Hair dryer issue ", "Smell issue "
+            "1- Previous guest forgot : ", "2- Curtains loose ", "3- Phone issue ", "4- Adaptor missing ",
+            "5- AC remote issue ", "6- TV issue ", "7- AC switch not taped ", "8- Fridge switch not taped ",
+            "9- Window/Door lock issue ", "10- Safe box closed ", "11- Lighting issue ", "12- Fan issue ",
+            "13- WC seat loose ", "14- Shower leaking ", "15- Drain dry ", "16- Shower door issue ", 
+            "17- Linen issue ", "18- Soap missing ", "19- Amenities missing ", "20- Hair dryer issue ", 
+            "21- Iron/Board issue ", "22- Smell issue "
         ];
 
         let itemStates = new Array(CHECKS.length).fill(0);
@@ -115,16 +116,26 @@
         function toggleItem(index) {
             itemStates[index] = (itemStates[index] + 1) % 3;
             renderItems();
-            updateNotesFromStates();
+            updateNotesWithOrder(index);
         }
 
-        function updateNotesFromStates() {
-            let noteArea = document.getElementById('notes');
-            let reports = [];
-            itemStates.forEach((state, i) => { 
-                if (state === 2) { reports.push((i + 1) + "- " + PROBLEM_TEXTS[i]); }
-            });
-            noteArea.value = reports.join("\n");
+        // Logic to update text area while preserving manual entry order
+        function updateNotesWithOrder(index) {
+            const noteArea = document.getElementById('notes');
+            const problemLine = PROBLEM_TEXTS[index];
+            let currentText = noteArea.value;
+
+            if (itemStates[index] === 2) {
+                // If the state is now X, add the problem line at the bottom
+                if (!currentText.includes(problemLine)) {
+                    noteArea.value = (currentText.trim() ? currentText.trim() + "\n" : "") + problemLine;
+                }
+            } else {
+                // If state is now OK or Blank, remove ONLY that specific problem line
+                let lines = currentText.split('\n');
+                let filteredLines = lines.filter(line => !line.includes(problemLine));
+                noteArea.value = filteredLines.join('\n').trim();
+            }
         }
 
         function renderItems() {
