@@ -13,7 +13,6 @@
         .website-link a { color: #1a73e8; text-decoration: none; }
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; font-size: 22px; }
         
-        /* The entire card is now a clickable label */
         .info-card { 
             display: flex; 
             align-items: flex-start; 
@@ -155,6 +154,12 @@
             </div>
             
             <div id="taxiFields" style="display:none; margin-top:10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                <label class="input-label">From:</label>
+                <input type="text" id="taxiFrom" placeholder="e.g. La Veranda Hotel" oninput="this.classList.remove('error')">
+                
+                <label class="input-label">To:</label>
+                <input type="text" id="taxiTo" placeholder="e.g. Larnaca Airport" oninput="this.classList.remove('error')">
+
                 <label class="input-label">Date:</label>
                 <input type="date" id="taxiDate" oninput="this.classList.remove('error')">
                 <label class="input-label">Time:</label>
@@ -179,7 +184,6 @@
 </div>
 
 <script>
-    // Initialize Time Dropdown
     const select = document.getElementById('estCheckout');
     for(let i=0; i<24; i++) {
         let hour = i < 10 ? '0'+i : i;
@@ -228,7 +232,7 @@
             document.getElementById('taxiBox').classList.add('error');
             isValid = false;
         } else if (taxiChoice.value === "yes") {
-            const tFields = ['taxiDate', 'taxiTime', 'taxiPax', 'taxiBags', 'taxiPhone'];
+            const tFields = ['taxiFrom', 'taxiTo', 'taxiDate', 'taxiTime', 'taxiPax', 'taxiBags', 'taxiPhone'];
             tFields.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el.value.trim()) {
@@ -261,7 +265,7 @@
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C173Z\n";
         msg += "- Reception: 08:00 till Midnight\n";
-        msg += "- Breakfast: 08:00 to noon\n";
+        msg += "- Breakfast: 08:00 to 12:00\n";
         msg += "- Dinner Kitchen:\n  18:00 till 22:00\n";
         msg += "- Standard Checkout: 12:00\n";
         msg += "- Reception Dial: 00\n";
@@ -272,6 +276,8 @@
 
         if(taxiChoice.value === "yes") {
             msg += "\nTAXI REQUESTED:\n";
+            msg += "- From: " + document.getElementById('taxiFrom').value + "\n";
+            msg += "- To: " + document.getElementById('taxiTo').value + "\n";
             msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
             msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
             msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
