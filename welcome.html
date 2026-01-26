@@ -187,6 +187,7 @@
 </div>
 
 <script>
+    // Initialize Time Dropdown
     const select = document.getElementById('estCheckout');
     for(let i=0; i<24; i++) {
         let hour = i < 10 ? '0'+i : i;
@@ -199,7 +200,9 @@
     function checkLateTime(val) {
         if (!val) return;
         const hour = parseInt(val.split(":")[0]);
-        document.getElementById('lateNotice').style.display = (hour > 12 || hour < 7) ? 'block' : 'none';
+        // Only show warning if hour is 13:00 (1 PM) or later. 
+        // 00:00 through 12:00 will not show the warning.
+        document.getElementById('lateNotice').style.display = (hour >= 13) ? 'block' : 'none';
     }
 
     function toggleTaxi(show) {
@@ -253,6 +256,7 @@
         const name = guestName.value.trim();
         const room = document.getElementById('roomNum').value.trim() || "To be assigned";
         const checkout = checkoutSelect.value;
+        const hour = parseInt(checkout.split(":")[0]);
 
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
@@ -261,7 +265,7 @@
         msg += "ROOM: " + room + "\n";
         msg += "EST. CHECKOUT: " + checkout + "\n";
         
-        if (parseInt(checkout.split(":")[0]) > 12 || parseInt(checkout.split(":")[0]) < 7) {
+        if (hour >= 13) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
         }
         
