@@ -18,10 +18,8 @@
         .status-ok { color: #25D366; border-color: #25D366; background: #e8f5e9; }
         .status-bad { color: #d93025; border-color: #d93025; background: #ffebee; }
 
-        /* Photo Styling */
         .item-img { width: 65px; height: 65px; border-radius: 8px; object-fit: cover; margin-right: 12px; border: 1px solid #ddd; flex-shrink: 0; }
         
-        /* Modal (Zoom) Styling */
         #imgModal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         #imgModal img { max-width: 90%; max-height: 80%; border-radius: 10px; border: 3px solid white; }
 
@@ -58,7 +56,7 @@
             <div id="list"></div>
             <label class="note-label">Report Details:</label>
             <textarea id="notes" placeholder="Fill details here..."></textarea>
-            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 20 ITEMS MUST BE MARKED!</p>
+            <p id="warn" style="color:red; display:none; text-align:center; font-weight:bold;">⚠️ ALL 21 ITEMS MUST BE MARKED!</p>
             <button id="sendBtn" onclick="send()">SEND TO GROUP</button>
         </div>
     </div>
@@ -70,21 +68,23 @@
             "Previous guest forgot items in the room", "Curtains are well attached and functional",
             "Telephone is in ringing mode", "European adaptor is in an electrical socket",
             "AC operates correctly; remote & batteries OK", "TV operates correctly; remote & batteries OK",
-            "AC switch is ON & taped (qty. 1 or2", "Mini-fridge switch ON & taped",
+            "AC switch is ON & taped (qty. 1 or 2)", "Mini-fridge switch ON & taped",
             "Windows & balcony door close & lock properly", "Safe box is empty & open",
             "All lighting are ok", "Toilet fan is operational",
             "WC seat cover well fixed", "Shower flexible not leaking",
-            "Shower glass door open and close properly", "Towels correct and linen OK",
-            "Soap are full in shower and lavatory", "Amenities are correct",
-            "Hair dryer OK", "Room fully clean & smelling fresh"
+            "Put water in the shower drain", // New Item 15
+            "Shower glass door open and close properly", // Shuffled to 16
+            "Towels correct and linen OK", "Soap are full in shower and lavatory", 
+            "Amenities are correct", "Hair dryer OK", "Room fully clean & smelling fresh"
         ];
 
         const PROBLEM_TEXTS = [
             "Previous guest forgot : ", "Curtains loose ", "Phone issue ", "Adaptor missing ",
             "AC remote issue ", "TV issue ", "AC switch not taped ", "Fridge switch not taped ",
             "Window/Door lock issue ", "Safe box closed ", "Lighting issue ", "Fan issue ",
-            "WC seat loose ", "Shower leaking ", "Shower door issue ", "Linen issue ",
-            "Soap missing ", "Amenities missing ", "Hair dryer issue ", "Smell issue "
+            "WC seat loose ", "Shower leaking ", "Drain dry ", // Issue for 15
+            "Shower door issue ", "Linen issue ", "Soap missing ", 
+            "Amenities missing ", "Hair dryer issue ", "Smell issue "
         ];
 
         let itemStates = new Array(CHECKS.length).fill(0);
@@ -106,9 +106,8 @@
             else { document.getElementById('loginError').style.display = 'block'; }
         }
 
-        // Zoom function
         function zoomImg(e, imgPath) {
-            e.stopPropagation(); // Prevents the checklist from toggling when clicking photo
+            e.stopPropagation(); 
             document.getElementById('modalImg').src = imgPath;
             document.getElementById('imgModal').style.display = 'flex';
         }
@@ -136,7 +135,6 @@
                 if (itemStates[i] === 1) { statusClass = "status-ok"; statusChar = "✓"; }
                 if (itemStates[i] === 2) { statusClass = "status-bad"; statusChar = "✕"; }
                 
-                // Using (i+1).png logic automatically
                 const imgPath = `${PHOTO_FOLDER}${i + 1}.png`;
 
                 listDiv.innerHTML += `
@@ -171,5 +169,3 @@
     </script>
 </body>
 </html>
-
-
