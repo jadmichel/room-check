@@ -3,50 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>La Veranda Hotel - Loading...</title>
+  <title>La Veranda Hotel - Redirecting</title>
   <script type="text/javascript">
-    /**
-     * REDIRECT LOGIC
-     * This script takes the visitor from GitHub to the functional Google Script.
-     */
     (function() {
-      // 1. Your specific Google Apps Script Web App URL
-      const googleWebAppUrl = "https://script.google.com/macros/s/AKfycbxxBIxAsdzDlEEEbf6f2EiVb11qyu_wJy9figzIbOo-4G1jPg_Rto-ihIU_ytnd-LXr-Q/exec";
+      // 1. The destination Google Script URL
+      const googleUrl = "https://script.google.com/macros/s/AKfycbxxBIxAsdzDlEEEbf6f2EiVb11qyu_wJy9figzIbOo-4G1jPg_Rto-ihIU_ytnd-LXr-Q/exec";
 
-      // 2. Capture any parameters like ?room=110 from the QR code
-      const queryString = window.location.search;
+      // 2. Get the room number from the QR code (e.g., ?room=110)
+      const params = window.location.search;
 
-      // 3. Immediate redirect
-      window.location.replace(googleWebAppUrl + queryString);
+      // 3. Jump to the Google Script immediately
+      window.location.replace(googleUrl + params);
     })();
   </script>
   <style>
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      display: flex; 
-      flex-direction: column;
-      align-items: center; 
-      justify-content: center; 
-      height: 100vh; 
-      margin: 0; 
-      background-color: #f4f7f9;
-      color: #1a73e8;
-    }
-    .loader {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #1a73e8;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-    }
+    body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f4f7f9; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #1a73e8; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    p { font-weight: bold; font-size: 18px; }
   </style>
 </head>
 <body>
   <div class="loader"></div>
-  <p>Connecting to La Veranda Guest Welcome...</p>
 </body>
 </html>
