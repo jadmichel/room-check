@@ -12,63 +12,26 @@
         .website-link { text-align: center; margin-bottom: 20px; font-size: 13px; }
         .website-link a { color: #1a73e8; text-decoration: none; }
         h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; font-size: 22px; }
-        
-        .info-card { 
-            display: flex; 
-            align-items: flex-start; 
-            background: #fdfdfd; 
-            border: 1px solid #e0e0e0; 
-            padding: 12px; 
-            border-radius: 8px; 
-            margin-bottom: 10px; 
-            transition: 0.3s; 
-            cursor: pointer; 
-        }
+        .info-card { display: flex; align-items: flex-start; background: #fdfdfd; border: 1px solid #e0e0e0; padding: 12px; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; }
         .info-card:hover { background: #f8faff; }
         .info-card.error { border: 2px solid #ff4d4d; background: #fff5f5; }
-        
-        .info-card input[type="checkbox"] { 
-            width: 22px; 
-            height: 22px; 
-            margin-right: 12px; 
-            margin-top: 3px; 
-            cursor: pointer; 
-            flex-shrink: 0;
-        }
-        
+        .info-card input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; margin-top: 3px; cursor: pointer; flex-shrink: 0; }
         .info-content { flex: 1; }
         .info-title { font-weight: bold; color: #333; font-size: 13px; text-transform: uppercase; display: block; }
         .info-text { font-size: 15px; margin: 2px 0 0 0; color: #333; line-height: 1.4; }
-
         .form-group { margin-top: 10px; }
         label.input-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #555; }
-        
-        input, select { 
-            width: 100%; 
-            padding: 12px; 
-            margin-bottom: 15px; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            font-size: 15px; 
-            box-sizing: border-box;
-            background-color: #f2f2f2; 
-            color: #333;
-            display: block;
-            transition: all 0.3s;
-        }
-
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; background-color: #f2f2f2; color: #333; display: block; transition: all 0.3s; }
         input.error, select.error { border: 2px solid #ff4d4d; background-color: #fff5f5; }
-        
         #lateNotice { background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 15px; border: 1px solid #ffeeba; display: none; }
         .taxi-box { background: #f0f4f8; border: 1px solid #d1d9e0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .taxi-box.error { border: 2px solid #ff4d4d; }
         .taxi-options { display: flex; gap: 20px; margin-bottom: 10px; align-items: center; }
         .edit-note { font-size: 12px; color: #666; font-style: italic; margin-bottom: 10px; display: block; }
-        
         .map-section { background: #e8f0fe; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px solid #c2d7fa; }
         .map-btn { background-color: #4285F4; color: white; border: none; padding: 12px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 5px; }
-        
         button#sendBtn { background-color: #25D366; color: white; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        #status { margin-top:10px; font-weight:600; }
     </style>
 </head>
 <body>
@@ -183,6 +146,7 @@
         </div>
 
         <button id="sendBtn" onclick="send()">CONFIRM & SEND</button>
+        <div id="status"></div>
     </div>
 </div>
 
@@ -197,6 +161,15 @@
         select.appendChild(el);
     }
 
+    // auto-fill room from ?room= query param if present
+    (function setRoomFromQuery(){
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const r = params.get('room');
+        if(r) document.getElementById('roomNum').value = r;
+      } catch(e){}
+    })();
+
     function checkLateTime(val) {
         if (!val) return;
         const hour = parseInt(val.split(":")[0]);
@@ -210,7 +183,7 @@
         document.getElementById('taxiBox').classList.remove('error');
     }
 
-    function send() {
+    function validateForm() {
         let isValid = true;
         
         const guestName = document.getElementById('guestName');
@@ -249,54 +222,100 @@
         }
 
         if (!isValid) {
-            alert("Please fill in all highlighted fields and confirm the hotel information before sending.");
-            return;
+            return { ok:false, guestName, checkoutSelect };
         }
+        return { ok:true };
+    }
 
-        const name = guestName.value.trim();
+    // build payload for Apps Script
+    function buildPayload() {
+        const name = document.getElementById('guestName').value.trim();
         const room = document.getElementById('roomNum').value.trim() || "To be assigned";
-        const checkout = checkoutSelect.value;
+        const checkout = document.getElementById('estCheckout').value;
         const hour = parseInt(checkout.split(":")[0]);
+        const taxiChoice = document.querySelector('input[name="taxiChoice"]:checked').value;
 
+        const taxi = {
+            from: document.getElementById('taxiFrom').value || "",
+            to: document.getElementById('taxiTo').value || "",
+            date: document.getElementById('taxiDate').value || "",
+            time: document.getElementById('taxiTime').value || "",
+            pax: document.getElementById('taxiPax').value || "",
+            bags: document.getElementById('taxiBags').value || "",
+            phone: document.getElementById('taxiPhone').value || ""
+        };
+
+        return {
+            guestName: name,
+            room: room,
+            checkout: checkout,
+            lateCheckout: hour >= 13,
+            taxiRequested: taxiChoice === "yes",
+            taxi: taxi
+        };
+    }
+
+    // build the WhatsApp message text used after email is sent
+    function buildWhatsappMessage(data) {
         let msg = "LA VERANDA HOTEL\n";
         msg += "www.laverandadelarnacahotel.com\n";
         msg += "---------------------------------\n";
-        msg += "GUEST: " + name + "\n";
-        msg += "ROOM: " + room + "\n";
-        msg += "EST. CHECKOUT: " + checkout + "\n";
-        
-        if (hour >= 13) {
+        msg += "GUEST: " + data.guestName + "\n";
+        msg += "ROOM: " + data.room + "\n";
+        msg += "EST. CHECKOUT: " + data.checkout + "\n";
+        if (data.lateCheckout) {
             msg += "LATE CHECK-OUT REQUESTED: we will send you the price if late check-out is possible.\n";
         }
-        
         msg += "\nHOTEL INFORMATION:\n";
         msg += "- Main Door Code: C173Z\n";
         msg += "- Reception: 08:00 till Midnight\n";
         msg += "- Breakfast: 08:00 to 12:00\n";
-        msg += "- Dinner Kitchen:\n  18:00 till 22:00\n";
+        msg += "- Dinner Kitchen: 18:00 till 22:00\n";
         msg += "- Standard Checkout: 12:00\n";
         msg += "- Reception Dial: 00\n";
         msg += "- Restaurant Dial: 01\n";
-        
-        msg += "\nGOOGLE MAPS LOCATION:\n";
-        msg += "https://www.google.com/maps?q=34.8926998,33.6351884";
-
-        if(taxiChoice.value === "yes") {
+        if (data.taxiRequested) {
             msg += "\nTAXI REQUESTED:\n";
-            msg += "- From: " + document.getElementById('taxiFrom').value + "\n";
-            msg += "- To: " + document.getElementById('taxiTo').value + "\n";
-            msg += "- Date: " + document.getElementById('taxiDate').value + "\n";
-            msg += "- Time: " + document.getElementById('taxiTime').value + "\n";
-            msg += "- Pax: " + document.getElementById('taxiPax').value + "\n";
-            msg += "- Bags: " + document.getElementById('taxiBags').value + "\n";
-            msg += "- Contact: " + document.getElementById('taxiPhone').value + "\n";
+            msg += "- From: " + data.taxi.from + "\n";
+            msg += "- To: " + data.taxi.to + "\n";
+            msg += "- Date: " + data.taxi.date + "\n";
+            msg += "- Time: " + data.taxi.time + "\n";
+            msg += "- Pax: " + data.taxi.pax + "\n";
+            msg += "- Bags: " + data.taxi.bags + "\n";
+            msg += "- Contact: " + data.taxi.phone + "\n";
             msg += "We will send you the price for approval soon.\n";
         }
-        
         msg += "\n---------------------------------\n";
         msg += "Thank you for choosing La Veranda Hotel!";
+        return msg;
+    }
 
-        window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
+    function send() {
+        // validation
+        const v = validateForm();
+        if (!v.ok) {
+            alert("Please fill in all highlighted fields and confirm the hotel information before sending.");
+            return;
+        }
+
+        const payload = buildPayload();
+        document.getElementById('status').textContent = 'Sending…';
+
+        // call Apps Script backend
+        google.script.run
+            .withSuccessHandler(function(res){
+                // on success: open WhatsApp with the message (manager number is fixed below)
+                document.getElementById('status').textContent = 'Sent — opening WhatsApp...';
+                const msg = buildWhatsappMessage(payload);
+                // replace with your manager's WhatsApp number if different
+                window.location.href = "https://wa.me/35796276769?text=" + encodeURIComponent(msg);
+            })
+            .withFailureHandler(function(err){
+                console.error(err);
+                document.getElementById('status').textContent = 'Error sending information. Please contact reception.';
+                alert("Error sending information. Please try again or contact reception.");
+            })
+            .submitWelcome(payload);
     }
 </script>
 </body>
